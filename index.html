@@ -340,109 +340,109 @@
       background: var(--cbb-soft);
     }
 
-    .flow-grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(220px, 1fr));
-      gap: 22px 30px;
-      align-items: start;
+    .flow-chart-wrap {
+      overflow-x: auto;
+      padding-bottom: 6px;
     }
 
-    .flow-stage {
-      position: relative;
-    }
-
-    .flow-stage::after {
-      content: "";
-      position: absolute;
-      top: 34px;
-      left: calc(100% + 6px);
-      width: 20px;
-      height: 2px;
-      background: linear-gradient(90deg, var(--connector, rgba(122, 211, 255, 0.18)), transparent);
-    }
-
-    .flow-stage:nth-child(4n)::after,
-    .flow-stage:last-child::after {
-      display: none;
-    }
-
-    .flow-stage.muted {
-      opacity: 0.38;
-    }
-
-    .flow-stage.path-hot {
-      --connector: var(--path-color);
-    }
-
-    .flow-node {
+    .flow-chart {
       width: 100%;
-      min-height: 74px;
-      display: grid;
-      grid-template-columns: 30px minmax(0, 1fr);
-      gap: 10px;
-      align-items: center;
-      text-align: left;
-      border: 1px solid rgba(122, 211, 255, 0.18);
-      border-radius: 999px;
-      padding: 11px 14px 11px 11px;
-      color: var(--text);
-      background: rgba(4, 13, 20, 0.72);
-      cursor: pointer;
-      position: relative;
-      transition: border-color 160ms ease, transform 160ms ease, background 160ms ease, box-shadow 160ms ease;
+      min-width: 1120px;
+      height: 470px;
+      display: block;
     }
 
-    .flow-node.decision {
-      border-radius: 18px;
-      background:
-        linear-gradient(135deg, rgba(34, 216, 255, 0.08), rgba(255, 189, 89, 0.08)),
-        rgba(4, 13, 20, 0.72);
+    .flow-link {
+      fill: none;
+      stroke: rgba(122, 211, 255, 0.28);
+      stroke-width: 2;
+      marker-end: url(#arrow);
     }
 
-    .flow-node.loop {
-      border-style: dashed;
+    .flow-link.path-hot {
+      stroke: var(--path-color);
+      stroke-width: 2.6;
+      filter: drop-shadow(0 0 8px var(--path-glow));
     }
 
-    .flow-node:hover {
-      transform: translateY(-2px);
-      border-color: rgba(34, 216, 255, 0.56);
+    .flow-link.muted {
+      opacity: 0.24;
     }
 
-    .flow-stage.path-hot .flow-node {
-      border-color: var(--path-color);
-      background: linear-gradient(180deg, var(--path-soft), rgba(4, 13, 20, 0.72));
-      box-shadow: 0 0 28px var(--path-glow);
-    }
-
-    .flow-stage.expanded .flow-node {
-      border-color: #e8fbff;
-      box-shadow: 0 0 0 1px rgba(232, 251, 255, 0.18), 0 22px 54px rgba(34, 216, 255, 0.14);
-      transform: translateY(-2px);
-    }
-
-    .step-no {
-      display: inline-grid;
-      place-items: center;
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      color: #dff8ff;
-      background: rgba(255, 255, 255, 0.09);
+    .flow-label {
+      fill: #a8bfce;
       font-size: 12px;
+    }
+
+    .flow-label.path-hot {
+      fill: #e9fbff;
       font-weight: 800;
     }
 
-    .flow-node h3 {
-      margin: 0;
-      font-size: 15px;
-      line-height: 1.35;
+    .svg-node {
+      cursor: pointer;
+      transition: opacity 160ms ease, filter 160ms ease;
     }
 
-    .flow-node p {
-      margin: 3px 0 0;
-      color: var(--muted);
+    .svg-node.muted {
+      opacity: 0.32;
+    }
+
+    .svg-node .shape {
+      fill: rgba(4, 13, 20, 0.78);
+      stroke: rgba(122, 211, 255, 0.24);
+      stroke-width: 1.4;
+    }
+
+    .svg-node.path-hot .shape {
+      stroke: var(--path-color);
+      stroke-width: 2;
+      filter: drop-shadow(0 0 14px var(--path-glow));
+    }
+
+    .svg-node.expanded .shape {
+      stroke: #e8fbff;
+      stroke-width: 2.6;
+      filter: drop-shadow(0 0 14px rgba(232, 251, 255, 0.22));
+    }
+
+    .svg-node .title {
+      fill: var(--text);
+      font-size: 15px;
+      font-weight: 850;
+    }
+
+    .svg-node .summary {
+      fill: #9db3c1;
       font-size: 12px;
-      line-height: 1.5;
+    }
+
+    .svg-node .badge {
+      font-size: 11px;
+      font-weight: 850;
+      letter-spacing: 0.02em;
+    }
+
+    .svg-node .badge.agent {
+      fill: #9ff2ff;
+    }
+
+    .svg-node .badge.human {
+      fill: #ffe0a8;
+    }
+
+    .svg-node .number {
+      fill: #dff8ff;
+      font-size: 12px;
+      font-weight: 850;
+    }
+
+    .flow-detail-layer {
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 14px;
     }
 
     .node-tags {
@@ -839,10 +839,6 @@
     }
 
     @media (max-width: 1080px) {
-      .flow-grid {
-        grid-template-columns: repeat(3, minmax(150px, 1fr));
-      }
-
       .demo-body {
         grid-template-columns: 1fr;
       }
@@ -875,7 +871,6 @@
       }
 
       .source-switch,
-      .flow-grid,
       .demo-steps,
       .kv-grid,
       .roadmap {
@@ -938,7 +933,10 @@
           <span class="pill cbb">CBB 路径</span>
         </div>
 
-        <div class="flow-grid" id="flowGrid" aria-label="完整算法开发流程"></div>
+        <div class="flow-chart-wrap" aria-label="完整算法开发流程">
+          <svg class="flow-chart" id="flowChart" viewBox="0 0 1120 545" role="img" aria-label="带分支和回环的算法开发流程图"></svg>
+        </div>
+        <div class="flow-detail-layer" id="flowDetailLayer" aria-live="polite"></div>
       </div>
     </section>
 
@@ -1026,6 +1024,38 @@
       { id: "code", title: "代码测试", summary: "代码草稿 / 单测", roles: ["agent"], paths: ["battery", "cbb"] },
       { id: "ops", title: "上线监控", summary: "触发效果 / 误报反馈", roles: ["agent"], paths: ["battery", "cbb"] },
       { id: "iteration", title: "模型迭代闭环", summary: "更新模型库 → 新一轮流程", roles: ["agent", "human"], paths: ["battery", "cbb"], kind: "loop", branch: ["完成迭代：更新已有模型", "发现新问题：回到需求进入"] }
+    ];
+
+    const flowNodes = [
+      { id: "intake", x: 40, y: 220, w: 170, h: 76 },
+      { id: "understand", x: 245, y: 170, w: 190, h: 132, shape: "diamond" },
+      { id: "data", x: 480, y: 70, w: 170, h: 76 },
+      { id: "eda", x: 690, y: 70, w: 170, h: 76 },
+      { id: "feature", x: 900, y: 20, w: 170, h: 76 },
+      { id: "mapping", x: 900, y: 135, w: 170, h: 76 },
+      { id: "confirm", x: 690, y: 245, w: 170, h: 76 },
+      { id: "logic", x: 480, y: 365, w: 170, h: 76 },
+      { id: "review", x: 690, y: 365, w: 170, h: 76 },
+      { id: "code", x: 900, y: 365, w: 170, h: 76 },
+      { id: "ops", x: 900, y: 460, w: 170, h: 76 },
+      { id: "iteration", x: 480, y: 460, w: 190, h: 76, kind: "loop" }
+    ];
+
+    const flowEdges = [
+      { paths: ["battery", "cbb"], d: "M210 258 L245 236" },
+      { paths: ["battery", "cbb"], d: "M435 203 C455 130, 460 108, 480 108", label: { x: 448, y: 142, text: "不可合并：新模型开发" } },
+      { paths: ["battery", "cbb"], d: "M435 269 C455 330, 458 403, 480 403", label: { x: 440, y: 350, text: "可合并：迭代已有模型" } },
+      { paths: ["battery", "cbb"], d: "M650 108 L690 108" },
+      { paths: ["battery"], d: "M860 108 C880 80, 885 58, 900 58", label: { x: 872, y: 74, text: "电池特征" } },
+      { paths: ["cbb"], d: "M860 108 C885 130, 885 173, 900 173", label: { x: 872, y: 158, text: "CBB 字段" } },
+      { paths: ["battery"], d: "M985 96 C1015 190, 920 283, 860 283" },
+      { paths: ["cbb"], d: "M985 211 C1010 255, 920 283, 860 283" },
+      { paths: ["battery", "cbb"], d: "M690 283 C640 305, 540 340, 565 365" },
+      { paths: ["battery", "cbb"], d: "M650 403 L690 403" },
+      { paths: ["battery", "cbb"], d: "M860 403 L900 403" },
+      { paths: ["battery", "cbb"], d: "M985 441 L985 460" },
+      { paths: ["battery", "cbb"], d: "M900 498 L670 498" },
+      { paths: ["battery", "cbb"], d: "M480 498 C300 520, 130 470, 125 296", label: { x: 230, y: 526, text: "发现新问题：回到需求进入" } }
     ];
 
     const sourceFlowDetails = {
@@ -1313,56 +1343,78 @@
     let activeScenario = "battery";
     let activeDemoStep = 0;
 
-    const flowGrid = document.getElementById("flowGrid");
+    const flowChart = document.getElementById("flowChart");
+    const flowDetailLayer = document.getElementById("flowDetailLayer");
     const sourceButtons = document.querySelectorAll(".source-btn");
     const demoSteps = document.getElementById("demoSteps");
 
     function renderFlow() {
-      flowGrid.innerHTML = flowSteps.map((step, index) => {
-        const inPath = step.paths.includes(activeSource);
-        const pathHot = inPath;
-        const expanded = expandedFlows.has(step.id);
-        const classes = [
-          "flow-stage",
-          step.roles.includes("human") ? "human" : "agent",
-          !inPath ? "muted" : "",
-          pathHot ? "path-hot" : "",
-          expanded ? "expanded" : "",
-          step.kind || ""
-        ].join(" ");
-        return `
-          <div class="${classes}" style="${pathStyle(step, inPath)}">
-            <button class="flow-node ${step.kind || ""}" data-flow="${step.id}" aria-expanded="${expanded}">
-              <span class="step-no">${String(index + 1).padStart(2, "0")}</span>
-              <span>
-                <h3>${step.title}</h3>
-                <p>${step.summary}</p>
-              </span>
-              <span class="node-tags">${step.roles.map((role) => `<span class="node-type ${role === "human" ? "human-label" : "agent-label"}">${role === "human" ? "人工" : "Agent"}</span>`).join("")}</span>
-              ${step.branch ? `<span class="branch-note">${step.branch.map((item) => `<span>${item}</span>`).join("")}</span>` : ""}
-            </button>
-            ${expanded ? buildFlowDetail(step) : ""}
-          </div>
-        `;
-      }).join("");
+      const activeStyle = pathStyleVars();
+      flowChart.innerHTML = `
+        <defs>
+          <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+            <path d="M0,0 L0,6 L8,3 z" fill="rgba(122,211,255,0.75)"></path>
+          </marker>
+        </defs>
+        ${flowEdges.map((edge) => renderEdge(edge, activeStyle)).join("")}
+        ${flowNodes.map((node, index) => renderSvgNode(node, index, activeStyle)).join("")}
+      `;
 
-      document.querySelectorAll(".flow-node").forEach((button) => {
-        button.addEventListener("click", () => {
-          if (expandedFlows.has(button.dataset.flow)) {
-            expandedFlows.delete(button.dataset.flow);
+      flowChart.querySelectorAll(".svg-node").forEach((node) => {
+        node.addEventListener("click", () => {
+          const id = node.dataset.flow;
+          if (expandedFlows.has(id)) {
+            expandedFlows.delete(id);
           } else {
-            expandedFlows.add(button.dataset.flow);
+            expandedFlows.add(id);
           }
           renderFlow();
         });
       });
+
+      flowDetailLayer.innerHTML = [...expandedFlows]
+        .map((id) => flowSteps.find((step) => step.id === id))
+        .filter(Boolean)
+        .map((step) => buildFlowDetail(step))
+        .join("");
     }
 
-    function pathStyle(step, inPath) {
-      const sourceColor = activeSource === "battery" ? "#42f2a1" : "#62b8ff";
-      const sourceSoft = activeSource === "battery" ? "rgba(66, 242, 161, 0.14)" : "rgba(98, 184, 255, 0.14)";
-      const sourceGlow = activeSource === "battery" ? "rgba(66, 242, 161, 0.14)" : "rgba(98, 184, 255, 0.14)";
-      return inPath ? `--path-color:${sourceColor}; --path-soft:${sourceSoft}; --path-glow:${sourceGlow};` : "";
+    function pathStyleVars() {
+      return {
+        color: activeSource === "battery" ? "#42f2a1" : "#62b8ff",
+        soft: activeSource === "battery" ? "rgba(66, 242, 161, 0.14)" : "rgba(98, 184, 255, 0.14)",
+        glow: activeSource === "battery" ? "rgba(66, 242, 161, 0.32)" : "rgba(98, 184, 255, 0.32)"
+      };
+    }
+
+    function renderEdge(edge, style) {
+      const hot = edge.paths.includes(activeSource);
+      const classes = ["flow-link", hot ? "path-hot" : "muted"].join(" ");
+      const label = edge.label ? `<text class="flow-label ${hot ? "path-hot" : ""}" x="${edge.label.x}" y="${edge.label.y}">${edge.label.text}</text>` : "";
+      return `<path class="${classes}" style="--path-color:${style.color};--path-glow:${style.glow}" d="${edge.d}"></path>${label}`;
+    }
+
+    function renderSvgNode(node, index, style) {
+      const step = flowSteps.find((item) => item.id === node.id);
+      const hot = step.paths.includes(activeSource);
+      const expanded = expandedFlows.has(node.id);
+      const classes = ["svg-node", hot ? "path-hot" : "muted", expanded ? "expanded" : ""].join(" ");
+      const badges = step.roles.map((role, i) => `
+        <text class="badge ${role === "human" ? "human" : "agent"}" x="${node.x + node.w - 52 - i * 45}" y="${node.y + 18}">${role === "human" ? "人工" : "Agent"}</text>
+      `).join("");
+      const shape = node.shape === "diamond"
+        ? `<polygon class="shape" points="${node.x + node.w / 2},${node.y} ${node.x + node.w},${node.y + node.h / 2} ${node.x + node.w / 2},${node.y + node.h} ${node.x},${node.y + node.h / 2}"></polygon>`
+        : `<rect class="shape" x="${node.x}" y="${node.y}" width="${node.w}" height="${node.h}" rx="${node.kind === "loop" ? 26 : 20}"></rect>`;
+      return `
+        <g class="${classes}" data-flow="${node.id}" style="--path-color:${style.color};--path-glow:${style.glow}">
+          ${shape}
+          <circle cx="${node.x + 28}" cy="${node.y + node.h / 2}" r="15" fill="rgba(255,255,255,0.08)"></circle>
+          <text class="number" x="${node.x + 20}" y="${node.y + node.h / 2 + 4}">${String(index + 1).padStart(2, "0")}</text>
+          <text class="title" x="${node.x + 52}" y="${node.y + 34}">${step.title}</text>
+          <text class="summary" x="${node.x + 52}" y="${node.y + 56}">${step.summary}</text>
+          ${badges}
+        </g>
+      `;
     }
 
     function buildFlowDetail(step) {
