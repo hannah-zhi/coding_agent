@@ -77,7 +77,7 @@
     }
 
     .page {
-      width: min(1240px, calc(100% - 44px));
+      width: min(1540px, calc(100% - 44px));
       margin: 0 auto;
       padding: 28px 0 64px;
     }
@@ -342,14 +342,15 @@
 
     .flow-chart-wrap {
       position: relative;
-      overflow: visible;
-      padding-bottom: 6px;
+      overflow-x: auto;
+      overflow-y: visible;
+      padding-bottom: 360px;
     }
 
     .flow-chart {
       width: 100%;
-      min-width: 1120px;
-      height: 470px;
+      min-width: 1500px;
+      height: 760px;
       display: block;
     }
 
@@ -477,14 +478,14 @@
     .node-popover-layer {
       position: absolute;
       inset: 0;
-      min-width: 1120px;
-      height: 545px;
+      min-width: 1500px;
+      height: 1120px;
       pointer-events: none;
     }
 
     .node-popover {
       position: absolute;
-      width: 320px;
+      width: 360px;
       pointer-events: auto;
       z-index: 5;
     }
@@ -982,7 +983,7 @@
         </div>
 
         <div class="flow-chart-wrap" aria-label="完整算法开发流程">
-          <svg class="flow-chart" id="flowChart" viewBox="0 0 1120 545" role="img" aria-label="带分支和回环的算法开发流程图"></svg>
+          <svg class="flow-chart" id="flowChart" viewBox="0 0 1500 760" role="img" aria-label="带分支和回环的算法开发流程图"></svg>
           <div class="node-popover-layer" id="nodePopoverLayer" aria-live="polite"></div>
         </div>
         <div class="flow-detail-layer" id="flowDetailLayer" aria-live="polite"></div>
@@ -1076,35 +1077,35 @@
     ];
 
     const flowNodes = [
-      { id: "intake", x: 40, y: 220, w: 170, h: 76 },
-      { id: "understand", x: 245, y: 170, w: 190, h: 132, shape: "diamond" },
-      { id: "data", x: 480, y: 70, w: 170, h: 76 },
-      { id: "eda", x: 690, y: 70, w: 170, h: 76 },
-      { id: "feature", x: 900, y: 20, w: 170, h: 76 },
-      { id: "mapping", x: 900, y: 135, w: 170, h: 76 },
-      { id: "confirm", x: 690, y: 245, w: 170, h: 76 },
-      { id: "logic", x: 480, y: 365, w: 170, h: 76 },
-      { id: "review", x: 690, y: 365, w: 170, h: 76 },
-      { id: "code", x: 900, y: 365, w: 170, h: 76 },
-      { id: "ops", x: 900, y: 460, w: 170, h: 76 },
-      { id: "iteration", x: 480, y: 460, w: 190, h: 76, kind: "loop" }
+      { id: "intake", x: 50, y: 315, w: 220, h: 86 },
+      { id: "understand", x: 330, y: 270, w: 270, h: 170, shape: "diamond" },
+      { id: "data", x: 720, y: 120, w: 220, h: 86 },
+      { id: "eda", x: 1000, y: 120, w: 220, h: 86 },
+      { id: "feature", x: 1260, y: 60, w: 220, h: 86 },
+      { id: "mapping", x: 1260, y: 205, w: 220, h: 86 },
+      { id: "confirm", x: 1000, y: 355, w: 220, h: 86 },
+      { id: "logic", x: 720, y: 520, w: 220, h: 86 },
+      { id: "review", x: 1000, y: 520, w: 220, h: 86 },
+      { id: "code", x: 1260, y: 520, w: 220, h: 86 },
+      { id: "ops", x: 1260, y: 630, w: 220, h: 86 },
+      { id: "iteration", x: 720, y: 630, w: 240, h: 86, kind: "loop" }
     ];
 
     const flowEdges = [
-      { paths: ["battery", "cbb"], d: "M210 258 L245 236" },
-      { paths: ["battery", "cbb"], d: "M435 203 C455 130, 460 108, 480 108", label: { x: 535, y: 86, w: 158, text: "不可合并：新模型开发" } },
-      { paths: ["battery", "cbb"], d: "M435 269 C455 330, 458 403, 480 403", label: { x: 535, y: 345, w: 158, text: "可合并：迭代已有模型" } },
-      { paths: ["battery", "cbb"], d: "M650 108 L690 108" },
-      { paths: ["battery"], d: "M860 108 C880 80, 885 58, 900 58", label: { x: 895, y: 78, w: 82, text: "电池特征" } },
-      { paths: ["cbb"], d: "M860 108 C885 130, 885 173, 900 173", label: { x: 895, y: 155, w: 82, text: "CBB 字段" } },
-      { paths: ["battery"], d: "M985 96 C1015 190, 920 283, 860 283" },
-      { paths: ["cbb"], d: "M985 211 C1010 255, 920 283, 860 283" },
-      { paths: ["battery", "cbb"], d: "M690 283 C640 305, 540 340, 565 365" },
-      { paths: ["battery", "cbb"], d: "M650 403 L690 403" },
-      { paths: ["battery", "cbb"], d: "M860 403 L900 403" },
-      { paths: ["battery", "cbb"], d: "M985 441 L985 460" },
-      { paths: ["battery", "cbb"], d: "M900 498 L670 498" },
-      { paths: ["battery", "cbb"], d: "M480 498 C300 520, 130 470, 125 296", label: { x: 290, y: 518, w: 190, text: "发现新问题：回到需求进入" } }
+      { paths: ["battery", "cbb"], d: "M270 358 L330 355" },
+      { paths: ["battery", "cbb"], d: "M600 315 C650 170, 665 163, 720 163", label: { x: 605, y: 90, w: 190, text: "不可合并：新模型开发" } },
+      { paths: ["battery", "cbb"], d: "M600 395 C650 500, 665 563, 720 563", label: { x: 610, y: 475, w: 205, text: "可合并：迭代已有模型" } },
+      { paths: ["battery", "cbb"], d: "M940 163 L1000 163" },
+      { paths: ["battery"], d: "M1220 163 C1240 130, 1245 103, 1260 103", label: { x: 1220, y: 68, w: 100, text: "电池特征" } },
+      { paths: ["cbb"], d: "M1220 163 C1240 190, 1245 248, 1260 248", label: { x: 1230, y: 315, w: 100, text: "CBB 字段" } },
+      { paths: ["battery"], d: "M1370 146 C1410 245, 1330 398, 1220 398" },
+      { paths: ["cbb"], d: "M1370 291 C1410 345, 1320 398, 1220 398" },
+      { paths: ["battery", "cbb"], d: "M1000 398 C900 430, 805 480, 830 520" },
+      { paths: ["battery", "cbb"], d: "M940 563 L1000 563" },
+      { paths: ["battery", "cbb"], d: "M1220 563 L1260 563" },
+      { paths: ["battery", "cbb"], d: "M1370 606 L1370 630" },
+      { paths: ["battery", "cbb"], d: "M1260 673 L960 673" },
+      { paths: ["battery", "cbb"], d: "M720 673 C420 710, 160 620, 160 401", label: { x: 410, y: 730, w: 230, text: "发现新问题：回到需求进入" } }
     ];
 
     const sourceFlowDetails = {
@@ -1462,8 +1463,12 @@
       const expanded = expandedFlows.has(node.id);
       const classes = ["svg-node", hot ? "path-hot" : "muted", expanded ? "expanded" : ""].join(" ");
       const tagWidth = step.roles.length > 1 ? 112 : 62;
+      const tagX = node.shape === "diamond"
+        ? node.x + node.w / 2 - tagWidth / 2
+        : node.x + node.w - tagWidth - 12;
+      const tagY = node.shape === "diamond" ? node.y - 36 : node.y - 12;
       const badges = `
-        <foreignObject x="${node.x + node.w - tagWidth - 10}" y="${node.y - 12}" width="${tagWidth}" height="28">
+        <foreignObject x="${tagX}" y="${tagY}" width="${tagWidth}" height="28">
           <div xmlns="http://www.w3.org/1999/xhtml" class="svg-node-tag-wrap">
             ${step.roles.map((role) => `<span class="svg-node-tag ${role === "human" ? "human" : "agent"}">${role === "human" ? "人工" : "Agent"}</span>`).join("")}
           </div>
@@ -1472,11 +1477,11 @@
       const shape = node.shape === "diamond"
         ? `<polygon class="shape" points="${node.x + node.w / 2},${node.y} ${node.x + node.w},${node.y + node.h / 2} ${node.x + node.w / 2},${node.y + node.h} ${node.x},${node.y + node.h / 2}"></polygon>`
         : `<rect class="shape" x="${node.x}" y="${node.y}" width="${node.w}" height="${node.h}" rx="${node.kind === "loop" ? 26 : 20}"></rect>`;
-      const titleX = node.shape === "diamond" ? node.x + node.w / 2 : node.x + 52;
+      const titleX = node.shape === "diamond" ? node.x + node.w / 2 : node.x + 66;
       const titleAnchor = node.shape === "diamond" ? "middle" : "start";
       const summaryX = titleX;
-      const titleY = node.shape === "diamond" ? node.y + 56 : node.y + 34;
-      const summaryY = node.shape === "diamond" ? node.y + 78 : node.y + 56;
+      const titleY = node.shape === "diamond" ? node.y + 82 : node.y + 38;
+      const summaryY = node.shape === "diamond" ? node.y + 108 : node.y + 62;
       return `
         <g class="${classes}" data-flow="${node.id}" style="--path-color:${style.color};--path-glow:${style.glow}">
           ${shape}
@@ -1491,8 +1496,8 @@
 
     function buildNodePopover(step) {
       const node = flowNodes.find((item) => item.id === step.id);
-      const x = Math.min(Math.max(node.x, 10), 790);
-      const y = node.y + node.h + 10;
+      const x = Math.min(Math.max(node.x, 10), 1120);
+      const y = node.y + node.h + 14;
       return `<div class="node-popover" style="left:${x}px; top:${y}px">${buildFlowDetail(step)}</div>`;
     }
 
