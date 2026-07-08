@@ -342,120 +342,150 @@
 
     .flow-grid {
       display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
-      gap: 12px;
+      grid-template-columns: repeat(4, minmax(220px, 1fr));
+      gap: 22px 30px;
+      align-items: start;
+    }
+
+    .flow-stage {
+      position: relative;
+    }
+
+    .flow-stage::after {
+      content: "";
+      position: absolute;
+      top: 34px;
+      left: calc(100% + 6px);
+      width: 20px;
+      height: 2px;
+      background: linear-gradient(90deg, var(--connector, rgba(122, 211, 255, 0.18)), transparent);
+    }
+
+    .flow-stage:nth-child(4n)::after,
+    .flow-stage:last-child::after {
+      display: none;
+    }
+
+    .flow-stage.muted {
+      opacity: 0.38;
+    }
+
+    .flow-stage.path-hot {
+      --connector: var(--path-color);
     }
 
     .flow-node {
-      min-height: 150px;
+      width: 100%;
+      min-height: 74px;
+      display: grid;
+      grid-template-columns: 30px minmax(0, 1fr);
+      gap: 10px;
+      align-items: center;
       text-align: left;
-      border: 1px solid rgba(122, 211, 255, 0.16);
-      border-radius: 16px;
-      padding: 14px;
+      border: 1px solid rgba(122, 211, 255, 0.18);
+      border-radius: 999px;
+      padding: 11px 14px 11px 11px;
       color: var(--text);
-      background: rgba(4, 13, 20, 0.62);
+      background: rgba(4, 13, 20, 0.72);
       cursor: pointer;
       position: relative;
-      overflow: hidden;
       transition: border-color 160ms ease, transform 160ms ease, background 160ms ease, box-shadow 160ms ease;
     }
 
-    .flow-node::before {
-      content: "";
-      position: absolute;
-      inset: 0 0 auto;
-      height: 2px;
-      opacity: 0.75;
-      background: var(--node-color, var(--agent));
-      transform: scaleX(0);
-      transform-origin: left;
-      transition: transform 180ms ease;
-    }
-
-    .flow-node:hover,
-    .flow-node.active,
-    .flow-node.path-hot {
+    .flow-node:hover {
       transform: translateY(-2px);
-      border-color: color-mix(in srgb, var(--node-color, var(--agent)) 72%, white 0%);
-      box-shadow: 0 18px 46px rgba(34, 216, 255, 0.08);
+      border-color: rgba(34, 216, 255, 0.56);
     }
 
-    .flow-node.active::before,
-    .flow-node.path-hot::before {
-      transform: scaleX(1);
+    .flow-stage.path-hot .flow-node {
+      border-color: var(--path-color);
+      background: linear-gradient(180deg, var(--path-soft), rgba(4, 13, 20, 0.72));
+      box-shadow: 0 0 28px var(--path-glow);
     }
 
-    .flow-node.human {
-      --node-color: var(--human);
-      background: linear-gradient(180deg, rgba(255, 189, 89, 0.09), rgba(4, 13, 20, 0.62));
+    .flow-stage.expanded .flow-node {
+      border-color: #e8fbff;
+      box-shadow: 0 0 0 1px rgba(232, 251, 255, 0.18), 0 22px 54px rgba(34, 216, 255, 0.14);
+      transform: translateY(-2px);
     }
 
-    .flow-node.battery {
-      --node-color: var(--battery);
-    }
-
-    .flow-node.cbb {
-      --node-color: var(--cbb);
+    .flow-stage.human.path-hot .flow-node {
+      border-color: var(--human);
+      background: linear-gradient(180deg, rgba(255, 189, 89, 0.14), rgba(4, 13, 20, 0.72));
+      box-shadow: 0 0 28px rgba(255, 189, 89, 0.12);
     }
 
     .step-no {
       display: inline-grid;
       place-items: center;
-      width: 26px;
-      height: 26px;
-      margin-bottom: 12px;
+      width: 30px;
+      height: 30px;
       border-radius: 50%;
       color: #dff8ff;
-      background: rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.09);
       font-size: 12px;
       font-weight: 800;
     }
 
     .flow-node h3 {
       margin: 0;
-      font-size: 17px;
+      font-size: 15px;
       line-height: 1.35;
     }
 
     .flow-node p {
-      margin: 8px 0 12px;
+      margin: 3px 0 0;
       color: var(--muted);
-      font-size: 13px;
+      font-size: 12px;
       line-height: 1.5;
     }
 
-    .node-badges {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 7px;
-      margin-top: auto;
-    }
-
-    .detail-drawer {
-      margin-top: 16px;
-      display: grid;
-      grid-template-columns: 1.1fr 1fr 1fr;
-      gap: 12px;
-    }
-
-    .detail-card {
-      border: 1px solid rgba(122, 211, 255, 0.14);
-      border-radius: 15px;
-      padding: 15px;
-      background: rgba(255, 255, 255, 0.035);
-      min-height: 132px;
-    }
-
-    .detail-card small {
-      display: block;
+    .node-type {
+      position: absolute;
+      top: -8px;
+      right: 18px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(122, 211, 255, 0.18);
+      background: #07131d;
       color: var(--muted);
-      margin-bottom: 8px;
+      font-size: 11px;
     }
 
-    .detail-card strong {
-      display: block;
-      line-height: 1.58;
+    .flow-detail {
+      margin-top: 10px;
+      border: 1px solid rgba(122, 211, 255, 0.18);
+      border-radius: 15px;
+      padding: 14px;
+      background: rgba(7, 18, 28, 0.92);
+      box-shadow: 0 18px 44px rgba(0, 0, 0, 0.26);
+    }
+
+    .flow-detail h4 {
+      margin: 0 0 10px;
       font-size: 14px;
+      color: #dff8ff;
+    }
+
+    .detail-section + .detail-section {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(122, 211, 255, 0.11);
+    }
+
+    .detail-section small {
+      display: block;
+      margin-bottom: 7px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .detail-section ul {
+      margin: 0;
+      padding-left: 18px;
+      color: #d1e5ef;
+      font-size: 13px;
+      line-height: 1.62;
     }
 
     .demo {
@@ -738,10 +768,9 @@
 
     @media (max-width: 1080px) {
       .flow-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(3, minmax(150px, 1fr));
       }
 
-      .detail-drawer,
       .demo-body {
         grid-template-columns: 1fr;
       }
@@ -816,7 +845,7 @@
       <div class="section-head">
         <div>
           <h2>完整流程：共用主流程，按需求来源高亮差异节点</h2>
-          <p>每一步都标明“Agent 自动化/替代”或“人工关键判断”。点击任一节点，在下方展开该环节的详细能力、人工边界和交付物。</p>
+          <p>每一步都标明“Agent 自动化/替代”或“人工关键判断”。点击节点会在该节点下方展开详情，再次点击收回；可同时展开多个节点，便于讲解对比。</p>
         </div>
       </div>
 
@@ -840,21 +869,6 @@
         </div>
 
         <div class="flow-grid" id="flowGrid" aria-label="完整算法开发流程"></div>
-
-        <div class="detail-drawer" aria-live="polite">
-          <div class="detail-card">
-            <small>Agent 可以做什么</small>
-            <strong id="detailAgent"></strong>
-          </div>
-          <div class="detail-card">
-            <small>人工需要判断什么</small>
-            <strong id="detailHuman"></strong>
-          </div>
-          <div class="detail-card">
-            <small>点击后展示的交付物</small>
-            <strong id="detailOutput"></strong>
-          </div>
-        </div>
       </div>
     </section>
 
@@ -933,112 +947,134 @@
       {
         id: "intake",
         title: "需求进入",
-        summary: "接收机理假设或 CBB 需求文档",
-        badge: "人工+Agent",
+        summary: "机理假设 / CBB 文档",
         type: "human",
         paths: ["battery", "cbb"],
-        agent: "自动提取需求对象、风险模式、关键指标、待澄清问题，形成结构化任务卡。",
-        human: "确认需求边界、业务优先级、是否进入算法开发流程。",
-        output: "结构化需求卡、问题清单、场景优先级。"
+        supportLabel: "Agent 辅助准备",
+        support: ["抽取需求对象、风险模式、指标、触发条件和待澄清问题。", "把非结构化描述整理成任务卡，减少人工反复读文档和整理表格。"],
+        decisionLabel: "人工介入必要性",
+        decision: ["决定需求是否有安全价值和开发优先级。", "确认责任边界，避免 Agent 把模糊需求直接推进到算法开发。"],
+        outputs: ["结构化需求卡", "需求澄清问题清单", "算法开发优先级建议"]
       },
       {
         id: "understand",
         title: "场景理解",
-        summary: "区分机理路径与部件需求路径",
-        badge: "Agent",
+        summary: "机理链 / 需求链",
         type: "agent",
         paths: ["battery", "cbb"],
-        agent: "电池路径整理失效模式和特征假设；CBB 路径解析需求文档和专家口径。",
-        human: "确认机理假设或需求口径是否准确，补充专家经验。",
-        output: "机理链/需求链、字段映射草案、确认问题。"
+        supportLabel: "Agent 自动化优势",
+        support: ["电池路径：整理失效模式、机理链条、特征假设。", "CBB 路径：解析需求文档、专家口径、字段含义。", "把经验描述转成可验证的问题定义，显著减少前期梳理时间。"],
+        decisionLabel: "人工边界",
+        decision: ["人工只确认机理或需求口径是否正确，不再手工重写需求材料。"],
+        outputs: ["机理链/需求链说明", "字段映射草案", "待确认问题列表"]
       },
       {
         id: "data",
         title: "数据提取",
-        summary: "自然语言转 SQL 与样本筛选",
-        badge: "Agent",
+        summary: "NL → SQL / 样本筛选",
         type: "agent",
         paths: ["battery", "cbb"],
-        agent: "生成 SQL、样本筛选条件和字段清单，从生产库抽取时序数据。",
-        human: "确认样本口径、时间范围、站点/簇/电芯筛选条件。",
-        output: "数据集、SQL 脚本、字段说明和数据质量初检。"
+        supportLabel: "Agent 自动化优势",
+        support: ["把自然语言分析意图转成 SQL、字段清单和样本筛选条件。", "自动检查字段缺失、采样频率、站点覆盖和时间范围。"],
+        decisionLabel: "人工边界",
+        decision: ["人工确认样本口径是否符合业务场景，避免错误样本污染后续分析。"],
+        outputs: ["可复用 SQL 脚本", "样本数据集", "字段字典与数据质量初检"]
       },
       {
         id: "eda",
         title: "EDA 探索",
-        summary: "趋势、分布、相关性、异常片段",
-        badge: "Agent",
+        summary: "趋势 / 分布 / 异常片段",
         type: "agent",
         paths: ["battery", "cbb"],
-        agent: "自动生成趋势图、分布统计、异常样本切片、相关性摘要和数据质量结论。",
-        human: "判断异常样本是否代表真实工况，排除传感器或采集噪声。",
-        output: "EDA 报告、异常样本集、数据可用性结论。"
+        supportLabel: "Agent 自动化优势",
+        support: ["自动生成趋势图、分布统计、相关性摘要和异常样本切片。", "批量比较正常/异常样本，快速发现数据规律和质量问题。"],
+        decisionLabel: "人工边界",
+        decision: ["人工判断异常是否有真实工况含义，排除传感器噪声和采集异常。"],
+        outputs: ["EDA 自动分析报告", "异常样本清单", "数据可用性结论"]
       },
       {
         id: "feature",
         title: "特征发现",
-        summary: "候选特征、稳定性和可解释性",
-        badge: "Agent",
+        summary: "候选特征 / 解释性",
         type: "agent",
         paths: ["battery"],
-        agent: "自动组合压差、温升、持续时间、变化率、设备状态等候选特征并排序。",
-        human: "确认特征是否符合机理或业务解释，筛掉不可上线的弱特征。",
-        output: "特征候选表、优先级、特征计算口径。"
+        supportLabel: "Agent 自动化优势",
+        support: ["围绕压差、温升、一致性、变化率、持续时间自动生成候选特征。", "按稳定性、区分度、可解释性对特征排序。"],
+        decisionLabel: "人工边界",
+        decision: ["人工确认特征是否符合电池机理，剔除只在样本内偶然有效的弱特征。"],
+        outputs: ["特征候选表", "特征计算口径", "特征优先级与解释"]
+      },
+      {
+        id: "mapping",
+        title: "字段/指标映射",
+        summary: "CBB 指标 → 生产字段",
+        type: "agent",
+        paths: ["cbb"],
+        supportLabel: "Agent 自动化优势",
+        support: ["把 CBB 文档中的指标映射到生产库字段、采样频率和设备层级。", "自动标记字段缺失、口径冲突、替代字段和需专家确认项。"],
+        decisionLabel: "人工边界",
+        decision: ["人工确认字段真实业务含义，避免同名字段、状态位含义差异导致误判。"],
+        outputs: ["字段映射表", "数据缺口清单", "专家确认问题单"]
       },
       {
         id: "confirm",
         title: "需求/机理确认",
-        summary: "专家确认关键口径",
-        badge: "人工",
+        summary: "专家冻结关键口径",
         type: "human",
         paths: ["battery", "cbb"],
-        agent: "生成确认材料、证据截图、差异点和待决策问题。",
-        human: "电池侧确认机理链；CBB 侧确认字段含义、触发条件和验收口径。",
-        output: "确认记录、口径冻结、下一步评审输入。"
+        supportLabel: "Agent 辅助准备",
+        support: ["整理证据截图、异常样本、字段差异和待决策问题。", "生成给电池/CBB 专家的确认材料。"],
+        decisionLabel: "人工介入必要性",
+        decision: ["安全预警逻辑必须由机理或部件专家确认，Agent 不能替代责任判断。", "冻结触发条件、屏蔽条件和验收口径，避免后续反复返工。"],
+        outputs: ["专家确认记录", "冻结后的需求/机理口径", "进入评审的输入材料"]
       },
       {
         id: "logic",
         title: "模型/规则设计",
-        summary: "阈值、组合逻辑、风险等级",
-        badge: "Agent",
+        summary: "阈值 / 组合逻辑 / 风险等级",
         type: "agent",
         paths: ["battery", "cbb"],
-        agent: "生成规则/模型原型、阈值建议、屏蔽条件、风险等级说明和方案对比。",
-        human: "权衡误报漏报、风险等级、可解释性和处置动作。",
-        output: "算法逻辑草案、风险解释、方案对比。"
+        supportLabel: "Agent 自动化优势",
+        support: ["基于 EDA 和确认口径生成规则/模型原型、阈值建议、屏蔽条件。", "自动输出方案对比、风险等级解释和触发样例。"],
+        decisionLabel: "人工边界",
+        decision: ["人工评估误报漏报权衡、风险等级和处置动作是否可接受。"],
+        outputs: ["算法逻辑草案", "风险等级解释", "方案对比表", "触发/屏蔽条件清单"]
       },
       {
         id: "review",
         title: "算法评审",
-        summary: "逻辑、解释、上线风险",
-        badge: "人工",
+        summary: "解释性 / 上线风险",
         type: "human",
         paths: ["battery", "cbb"],
-        agent: "准备评审材料、样本证据、测试计划和问答清单。",
-        human: "评审算法逻辑、风险解释、上线边界和责任链。",
-        output: "评审结论、修改意见、上线约束。"
+        supportLabel: "Agent 辅助准备",
+        support: ["自动汇总样本证据、EDA 图表、规则逻辑、测试计划和评审问答。"],
+        decisionLabel: "人工介入必要性",
+        decision: ["安全类算法上线前必须由人确认风险解释、责任边界和处置链路。", "评审结论决定是否开发、灰度、修改或暂停。"],
+        outputs: ["评审 PPT/报告", "评审结论", "修改意见清单", "上线约束"]
       },
       {
         id: "code",
         title: "代码测试",
-        summary: "代码草稿、单测、边界样本",
-        badge: "Agent",
+        summary: "代码草稿 / 单测 / 边界样本",
         type: "agent",
         paths: ["battery", "cbb"],
-        agent: "生成算法代码草稿、单测脚本、边界样本、部署参数说明。",
-        human: "代码审查、测试结果确认、版本发布审批。",
-        output: "可测试代码、单测报告、部署材料。"
+        supportLabel: "Agent 自动化优势",
+        support: ["把评审通过的逻辑转成代码草稿、配置参数、单测脚本和边界样本。", "自动生成可回归测试用例，减少重复工程实现时间。"],
+        decisionLabel: "人工边界",
+        decision: ["人工做代码审查和测试结果确认，保证工程质量和线上可维护性。"],
+        outputs: ["算法代码草稿", "单测脚本", "边界样本集", "部署参数说明"]
       },
       {
         id: "ops",
         title: "上线监控迭代",
-        summary: "触发效果、误报反馈、优化建议",
-        badge: "Agent+人工",
+        summary: "触发效果 / 误报反馈",
         type: "agent",
         paths: ["battery", "cbb"],
-        agent: "汇总线上触发、误报反馈、漏报线索和调参建议。",
-        human: "决定是否调参、回滚、扩大范围或进入下一轮迭代。",
-        output: "监控摘要、迭代 Backlog、版本优化建议。"
+        supportLabel: "Agent 自动化优势",
+        support: ["自动汇总线上触发、误报反馈、漏报线索和样本复盘摘要。", "生成阈值调整、屏蔽条件补充和下一版优化建议。"],
+        decisionLabel: "人工边界",
+        decision: ["人工决定是否调参、回滚、扩大应用范围或进入下一轮开发。"],
+        outputs: ["运行监控日报/周报", "误报漏报样本清单", "迭代 Backlog", "版本优化建议"]
       }
     ];
 
@@ -1207,73 +1243,93 @@
     };
 
     let activeSource = "battery";
-    let activeFlow = "intake";
+    const expandedFlows = new Set();
     let activeScenario = "battery";
     let activeDemoStep = 0;
 
     const flowGrid = document.getElementById("flowGrid");
     const sourceButtons = document.querySelectorAll(".source-btn");
-    const detailAgent = document.getElementById("detailAgent");
-    const detailHuman = document.getElementById("detailHuman");
-    const detailOutput = document.getElementById("detailOutput");
     const demoSteps = document.getElementById("demoSteps");
 
     function renderFlow() {
       flowGrid.innerHTML = flowSteps.map((step, index) => {
-        const pathHot = step.paths.includes(activeSource) && (
-          activeSource === "battery"
-            ? ["understand", "feature", "confirm"].includes(step.id)
-            : ["understand", "data", "confirm"].includes(step.id)
-        );
+        const inPath = step.paths.includes(activeSource);
+        const pathHot = inPath;
+        const expanded = expandedFlows.has(step.id);
         const classes = [
-          "flow-node",
+          "flow-stage",
           step.type === "human" ? "human" : "agent",
-          step.paths.includes("battery") && !step.paths.includes("cbb") ? "battery" : "",
-          step.paths.includes("cbb") && !step.paths.includes("battery") ? "cbb" : "",
-          activeFlow === step.id ? "active" : "",
-          pathHot ? "path-hot" : ""
+          !inPath ? "muted" : "",
+          pathHot ? "path-hot" : "",
+          expanded ? "expanded" : ""
         ].join(" ");
-        const badgeClass = step.type === "human" ? "human" : "agent";
+        const nodeTone = step.type === "human" ? "human" : "agent";
         return `
-          <button class="${classes}" data-flow="${step.id}" style="--node-color:${nodeColor(step, pathHot)}">
-            <span class="step-no">${String(index + 1).padStart(2, "0")}</span>
-            <h3>${step.title}</h3>
-            <p>${step.summary}</p>
-            <div class="node-badges">
-              <span class="node-badge ${badgeClass}">${step.badge}</span>
-            </div>
-          </button>
+          <div class="${classes}" style="${pathStyle(step, inPath)}">
+            <button class="flow-node" data-flow="${step.id}" aria-expanded="${expanded}">
+              <span class="step-no">${String(index + 1).padStart(2, "0")}</span>
+              <span>
+                <h3>${step.title}</h3>
+                <p>${step.summary}</p>
+              </span>
+              <span class="node-type">${step.type === "human" ? "人工" : "Agent"}</span>
+            </button>
+            ${expanded ? buildFlowDetail(step, nodeTone) : ""}
+          </div>
         `;
       }).join("");
 
       document.querySelectorAll(".flow-node").forEach((button) => {
         button.addEventListener("click", () => {
-          activeFlow = button.dataset.flow;
-          updateFlowDetail();
+          if (expandedFlows.has(button.dataset.flow)) {
+            expandedFlows.delete(button.dataset.flow);
+          } else {
+            expandedFlows.add(button.dataset.flow);
+          }
           renderFlow();
         });
       });
-      updateFlowDetail();
     }
 
-    function nodeColor(step, pathHot) {
-      if (step.type === "human") return "#ffbd59";
-      if (pathHot && activeSource === "battery") return "#42f2a1";
-      if (pathHot && activeSource === "cbb") return "#62b8ff";
-      return "#22d8ff";
+    function pathStyle(step, inPath) {
+      const sourceColor = activeSource === "battery" ? "#42f2a1" : "#62b8ff";
+      const sourceSoft = activeSource === "battery" ? "rgba(66, 242, 161, 0.14)" : "rgba(98, 184, 255, 0.14)";
+      const sourceGlow = activeSource === "battery" ? "rgba(66, 242, 161, 0.14)" : "rgba(98, 184, 255, 0.14)";
+      const color = step.type === "human" ? "#ffbd59" : sourceColor;
+      const soft = step.type === "human" ? "rgba(255, 189, 89, 0.13)" : sourceSoft;
+      const glow = step.type === "human" ? "rgba(255, 189, 89, 0.13)" : sourceGlow;
+      return inPath ? `--path-color:${color}; --path-soft:${soft}; --path-glow:${glow};` : "";
     }
 
-    function updateFlowDetail() {
-      const step = flowSteps.find((item) => item.id === activeFlow);
-      detailAgent.textContent = step.agent;
-      detailHuman.textContent = step.human;
-      detailOutput.textContent = step.output;
+    function buildFlowDetail(step, tone) {
+      const outputItems = step.outputs.map((item) => `<li>${item}</li>`).join("");
+      const supportItems = step.support.map((item) => `<li>${item}</li>`).join("");
+      const decisionItems = step.decision.map((item) => `<li>${item}</li>`).join("");
+      const outputLabel = step.type === "human" ? "人工确认后的明确交付物" : "Agent 可直接生成/草拟的交付物";
+      return `
+        <div class="flow-detail ${tone}">
+          <h4>${step.title}｜${step.type === "human" ? "人工关键门" : "Agent 提效环节"}</h4>
+          <div class="detail-section">
+            <small>${step.supportLabel}</small>
+            <ul>${supportItems}</ul>
+          </div>
+          <div class="detail-section">
+            <small>${step.decisionLabel}</small>
+            <ul>${decisionItems}</ul>
+          </div>
+          <div class="detail-section">
+            <small>${outputLabel}</small>
+            <ul>${outputItems}</ul>
+          </div>
+        </div>
+      `;
     }
 
     sourceButtons.forEach((button) => {
       button.addEventListener("click", () => {
         activeSource = button.dataset.source;
         sourceButtons.forEach((item) => item.classList.toggle("active", item === button));
+        expandedFlows.clear();
         renderFlow();
       });
     });
