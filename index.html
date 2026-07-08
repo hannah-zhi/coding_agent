@@ -392,6 +392,17 @@
       transition: border-color 160ms ease, transform 160ms ease, background 160ms ease, box-shadow 160ms ease;
     }
 
+    .flow-node.decision {
+      border-radius: 18px;
+      background:
+        linear-gradient(135deg, rgba(34, 216, 255, 0.08), rgba(255, 189, 89, 0.08)),
+        rgba(4, 13, 20, 0.72);
+    }
+
+    .flow-node.loop {
+      border-style: dashed;
+    }
+
     .flow-node:hover {
       transform: translateY(-2px);
       border-color: rgba(34, 216, 255, 0.56);
@@ -434,10 +445,16 @@
       line-height: 1.5;
     }
 
-    .node-type {
+    .node-tags {
       position: absolute;
       top: -12px;
       right: 18px;
+      display: inline-flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .node-type {
       padding: 4px 10px;
       border-radius: 999px;
       border: 1px solid rgba(122, 211, 255, 0.18);
@@ -459,6 +476,24 @@
       border-color: rgba(255, 189, 89, 0.5);
       background: #2b210f;
       color: #ffe0a8;
+    }
+
+    .branch-note {
+      grid-column: 2;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 2px;
+      color: #b7ccd9;
+      font-size: 11px;
+      line-height: 1.35;
+    }
+
+    .branch-note span {
+      padding: 3px 7px;
+      border-radius: 999px;
+      border: 1px solid rgba(122, 211, 255, 0.18);
+      background: rgba(255, 255, 255, 0.04);
     }
 
     .flow-detail {
@@ -513,12 +548,16 @@
       font-weight: 850;
     }
 
-    .flow-detail.agent .detail-section strong {
+    .detail-section.agent strong {
       color: #8ff2ff;
     }
 
-    .flow-detail.human .detail-section strong {
+    .detail-section.human strong {
       color: #ffda95;
+    }
+
+    .detail-section.branch strong {
+      color: #bafcda;
     }
 
     .demo {
@@ -878,7 +917,7 @@
       <div class="section-head">
         <div>
           <h2>完整流程：共用主流程，按需求来源高亮差异节点</h2>
-          <p>每一步都标明“Agent 自动化/替代”或“人工关键判断”。点击节点会在该节点下方展开详情，再次点击收回；可同时展开多个节点，便于讲解对比。</p>
+          <p>每个节点右上角标明“Agent”或“人工”；确实需要双方参与的判断节点会同时显示两个标签。点击节点会在该节点下方展开详情，再次点击收回；可同时展开多个节点，便于讲解对比。</p>
         </div>
       </div>
 
@@ -975,138 +1014,18 @@
 
   <script>
     const flowSteps = [
-      {
-        id: "intake",
-        title: "需求进入",
-        summary: "机理假设 / CBB 文档",
-        type: "human",
-        paths: ["battery", "cbb"],
-        supportLabel: "Agent 辅助准备",
-        support: ["抽取需求对象、风险模式、指标、触发条件和待澄清问题。", "把非结构化描述整理成任务卡，减少人工反复读文档和整理表格。"],
-        decisionLabel: "人工介入必要性",
-        decision: ["决定需求是否有安全价值和开发优先级。", "确认责任边界，避免 Agent 把模糊需求直接推进到算法开发。"],
-        outputs: ["结构化需求卡", "需求澄清问题清单", "算法开发优先级建议"]
-      },
-      {
-        id: "understand",
-        title: "场景理解",
-        summary: "机理链 / 需求链",
-        type: "agent",
-        paths: ["battery", "cbb"],
-        supportLabel: "Agent 自动化优势",
-        support: ["电池路径：整理失效模式、机理链条、特征假设。", "CBB 路径：解析需求文档、专家口径、字段含义。", "把经验描述转成可验证的问题定义，显著减少前期梳理时间。"],
-        decisionLabel: "人工边界",
-        decision: ["人工只确认机理或需求口径是否正确，不再手工重写需求材料。"],
-        outputs: ["机理链/需求链说明", "字段映射草案", "待确认问题列表"]
-      },
-      {
-        id: "data",
-        title: "数据提取",
-        summary: "NL → SQL / 样本筛选",
-        type: "agent",
-        paths: ["battery", "cbb"],
-        supportLabel: "Agent 自动化优势",
-        support: ["把自然语言分析意图转成 SQL、字段清单和样本筛选条件。", "自动检查字段缺失、采样频率、站点覆盖和时间范围。"],
-        decisionLabel: "人工边界",
-        decision: ["人工确认样本口径是否符合业务场景，避免错误样本污染后续分析。"],
-        outputs: ["可复用 SQL 脚本", "样本数据集", "字段字典与数据质量初检"]
-      },
-      {
-        id: "eda",
-        title: "EDA 探索",
-        summary: "趋势 / 分布 / 异常片段",
-        type: "agent",
-        paths: ["battery", "cbb"],
-        supportLabel: "Agent 自动化优势",
-        support: ["自动生成趋势图、分布统计、相关性摘要和异常样本切片。", "批量比较正常/异常样本，快速发现数据规律和质量问题。"],
-        decisionLabel: "人工边界",
-        decision: ["人工判断异常是否有真实工况含义，排除传感器噪声和采集异常。"],
-        outputs: ["EDA 自动分析报告", "异常样本清单", "数据可用性结论"]
-      },
-      {
-        id: "feature",
-        title: "特征发现",
-        summary: "候选特征 / 解释性",
-        type: "agent",
-        paths: ["battery"],
-        supportLabel: "Agent 自动化优势",
-        support: ["围绕压差、温升、一致性、变化率、持续时间自动生成候选特征。", "按稳定性、区分度、可解释性对特征排序。"],
-        decisionLabel: "人工边界",
-        decision: ["人工确认特征是否符合电池机理，剔除只在样本内偶然有效的弱特征。"],
-        outputs: ["特征候选表", "特征计算口径", "特征优先级与解释"]
-      },
-      {
-        id: "mapping",
-        title: "字段/指标映射",
-        summary: "CBB 指标 → 生产字段",
-        type: "agent",
-        paths: ["cbb"],
-        supportLabel: "Agent 自动化优势",
-        support: ["把 CBB 文档中的指标映射到生产库字段、采样频率和设备层级。", "自动标记字段缺失、口径冲突、替代字段和需专家确认项。"],
-        decisionLabel: "人工边界",
-        decision: ["人工确认字段真实业务含义，避免同名字段、状态位含义差异导致误判。"],
-        outputs: ["字段映射表", "数据缺口清单", "专家确认问题单"]
-      },
-      {
-        id: "confirm",
-        title: "需求/机理确认",
-        summary: "专家冻结关键口径",
-        type: "human",
-        paths: ["battery", "cbb"],
-        supportLabel: "Agent 辅助准备",
-        support: ["整理证据截图、异常样本、字段差异和待决策问题。", "生成给电池/CBB 专家的确认材料。"],
-        decisionLabel: "人工介入必要性",
-        decision: ["安全预警逻辑必须由机理或部件专家确认，Agent 不能替代责任判断。", "冻结触发条件、屏蔽条件和验收口径，避免后续反复返工。"],
-        outputs: ["专家确认记录", "冻结后的需求/机理口径", "进入评审的输入材料"]
-      },
-      {
-        id: "logic",
-        title: "模型/规则设计",
-        summary: "阈值 / 组合逻辑 / 风险等级",
-        type: "agent",
-        paths: ["battery", "cbb"],
-        supportLabel: "Agent 自动化优势",
-        support: ["基于 EDA 和确认口径生成规则/模型原型、阈值建议、屏蔽条件。", "自动输出方案对比、风险等级解释和触发样例。"],
-        decisionLabel: "人工边界",
-        decision: ["人工评估误报漏报权衡、风险等级和处置动作是否可接受。"],
-        outputs: ["算法逻辑草案", "风险等级解释", "方案对比表", "触发/屏蔽条件清单"]
-      },
-      {
-        id: "review",
-        title: "算法评审",
-        summary: "解释性 / 上线风险",
-        type: "human",
-        paths: ["battery", "cbb"],
-        supportLabel: "Agent 辅助准备",
-        support: ["自动汇总样本证据、EDA 图表、规则逻辑、测试计划和评审问答。"],
-        decisionLabel: "人工介入必要性",
-        decision: ["安全类算法上线前必须由人确认风险解释、责任边界和处置链路。", "评审结论决定是否开发、灰度、修改或暂停。"],
-        outputs: ["评审 PPT/报告", "评审结论", "修改意见清单", "上线约束"]
-      },
-      {
-        id: "code",
-        title: "代码测试",
-        summary: "代码草稿 / 单测 / 边界样本",
-        type: "agent",
-        paths: ["battery", "cbb"],
-        supportLabel: "Agent 自动化优势",
-        support: ["把评审通过的逻辑转成代码草稿、配置参数、单测脚本和边界样本。", "自动生成可回归测试用例，减少重复工程实现时间。"],
-        decisionLabel: "人工边界",
-        decision: ["人工做代码审查和测试结果确认，保证工程质量和线上可维护性。"],
-        outputs: ["算法代码草稿", "单测脚本", "边界样本集", "部署参数说明"]
-      },
-      {
-        id: "ops",
-        title: "上线监控迭代",
-        summary: "触发效果 / 误报反馈",
-        type: "agent",
-        paths: ["battery", "cbb"],
-        supportLabel: "Agent 自动化优势",
-        support: ["自动汇总线上触发、误报反馈、漏报线索和样本复盘摘要。", "生成阈值调整、屏蔽条件补充和下一版优化建议。"],
-        decisionLabel: "人工边界",
-        decision: ["人工决定是否调参、回滚、扩大应用范围或进入下一轮开发。"],
-        outputs: ["运行监控日报/周报", "误报漏报样本清单", "迭代 Backlog", "版本优化建议"]
-      }
+      { id: "intake", title: "需求进入", summary: "机理假设 / CBB 文档", roles: ["human"], paths: ["battery", "cbb"] },
+      { id: "understand", title: "场景理解与复用判断", summary: "是否合并已有模型", roles: ["agent", "human"], paths: ["battery", "cbb"], kind: "decision", branch: ["可合并：迭代已有模型", "不可合并：新模型开发"] },
+      { id: "data", title: "数据提取", summary: "NL → SQL / 样本筛选", roles: ["agent"], paths: ["battery", "cbb"] },
+      { id: "eda", title: "EDA 探索", summary: "趋势 / 分布 / 异常片段", roles: ["agent"], paths: ["battery", "cbb"] },
+      { id: "feature", title: "特征发现", summary: "电池候选特征", roles: ["agent"], paths: ["battery"] },
+      { id: "mapping", title: "字段/指标映射", summary: "CBB 指标 → 生产字段", roles: ["agent"], paths: ["cbb"] },
+      { id: "confirm", title: "需求/机理确认", summary: "冻结关键口径", roles: ["human"], paths: ["battery", "cbb"] },
+      { id: "logic", title: "模型/规则设计", summary: "新建或迭代方案", roles: ["agent"], paths: ["battery", "cbb"] },
+      { id: "review", title: "算法评审", summary: "解释性 / 上线风险", roles: ["human"], paths: ["battery", "cbb"] },
+      { id: "code", title: "代码测试", summary: "代码草稿 / 单测", roles: ["agent"], paths: ["battery", "cbb"] },
+      { id: "ops", title: "上线监控", summary: "触发效果 / 误报反馈", roles: ["agent"], paths: ["battery", "cbb"] },
+      { id: "iteration", title: "模型迭代闭环", summary: "更新模型库 → 新一轮流程", roles: ["agent", "human"], paths: ["battery", "cbb"], kind: "loop", branch: ["完成迭代：更新已有模型", "发现新问题：回到需求进入"] }
     ];
 
     const sourceFlowDetails = {
@@ -1117,9 +1036,10 @@
           outputs: ["电池风险任务卡", "失效模式描述", "样本筛选口径", "优先级建议"]
         },
         understand: {
-          support: ["围绕<strong>内短、异常衰退、一致性劣化</strong>整理机理链。", "把专家经验转成<strong>可验证特征假设</strong>，例如压差扩散、温升偏离、SOC 校正后电压下沉。"],
-          decision: ["人工确认机理链是否符合电池物理规律。", "剔除只有统计相关但缺少<strong>机理解释</strong>的方向。"],
-          outputs: ["电池机理链说明", "特征假设清单", "待验证样本条件"]
+          support: ["围绕<strong>内短、异常衰退、一致性劣化</strong>整理机理链和特征假设。", "检索已有电池安全模型，自动比对<strong>风险对象、输入特征、触发逻辑、适用边界</strong>。", "输出“可合并/不可合并”的证据清单。"],
+          decision: ["人工判断该需求是否能<strong>合并入已有模型</strong>。", "若机理一致且只需新增特征或调参，则进入<strong>已有模型迭代</strong>；若风险模式不同，则进入新模型开发。"],
+          branch: ["可合并：复用已有模型，后续做特征补充、阈值调整或版本迭代。", "不可合并：作为新模型/新规则进入完整开发流程。"],
+          outputs: ["模型复用判断单", "已有模型差异对比表", "新建/迭代路径建议"]
         },
         data: {
           support: ["自动生成面向电芯/簇/站点的<strong>SQL 和样本筛选条件</strong>。", "批量拉取<strong>单体电压、温度、SOC、压差、告警</strong>等时序数据。"],
@@ -1155,6 +1075,12 @@
           support: ["自动汇总<strong>触发次数、确认率、误报样本、漏报线索</strong>。", "生成阈值调整和下一版优化建议。"],
           decision: ["人工决定是否调参、扩大范围或回滚。", "确认迭代优先级和处置责任。"],
           outputs: ["运行监控日报/周报", "误报漏报样本清单", "迭代 Backlog", "版本优化建议"]
+        },
+        iteration: {
+          support: ["汇总本轮线上效果、评审意见和样本复盘，生成<strong>模型迭代方案</strong>。", "更新已有模型的<strong>特征版本、阈值参数、屏蔽条件、测试集</strong>。"],
+          decision: ["人工确认迭代是否完成、是否需要重新评审，以及是否产生新的风险假设。"],
+          branch: ["完成迭代：更新模型库和版本记录。", "发现新风险：沉淀为新需求，回到<strong>需求进入</strong>开启下一轮。"],
+          outputs: ["模型版本更新记录", "迭代变更说明", "新一轮需求 Backlog"]
         }
       },
       cbb: {
@@ -1164,9 +1090,10 @@
           outputs: ["CBB 结构化需求卡", "需求澄清清单", "验收口径草案", "开发优先级建议"]
         },
         understand: {
-          support: ["解析<strong>高压箱、接触器、绝缘监测</strong>相关的风险描述。", "把文档语言转成算法可理解的<strong>触发条件、屏蔽条件、观察窗口</strong>。"],
-          decision: ["人工确认需求文档是否表达完整。", "识别需要 CBB 专家补充的业务背景。"],
-          outputs: ["CBB 需求链说明", "触发/屏蔽条件草案", "专家待确认问题"]
+          support: ["解析<strong>高压箱、接触器、绝缘监测</strong>相关的风险描述。", "检索已有 CBB/高压箱算法，自动比对<strong>部件对象、字段依赖、触发条件、屏蔽工况</strong>。", "识别该需求是新增模型、已有模型扩展，还是只需配置迭代。"],
+          decision: ["人工判断是否能<strong>合并入已有部件模型</strong>。", "若只是新增字段或屏蔽条件，则走已有模型迭代；若风险模式或处置链路不同，则新开发。"],
+          branch: ["可合并：进入已有高压箱模型迭代，复用现有上线链路。", "不可合并：作为新部件风险模型进入开发。"],
+          outputs: ["需求复用判断单", "已有模型/规则对比表", "新建/迭代路径建议"]
         },
         data: {
           support: ["自动查询高压箱相关<strong>状态位、电流、温度、绝缘阻值</strong>字段。", "检查采样频率、缺失率、站点覆盖和异常样本数量。"],
@@ -1207,6 +1134,12 @@
           support: ["自动汇总<strong>触发站点、触发工况、人工确认结果、需求方反馈</strong>。", "识别维护工况误报和字段缺失导致的异常触发。"],
           decision: ["人工决定是否补充屏蔽条件、调整阈值或回到需求方确认。"],
           outputs: ["运行复盘卡", "误报样本清单", "需求方反馈摘要", "迭代建议"]
+        },
+        iteration: {
+          support: ["汇总上线触发、需求方反馈和字段质量问题，生成<strong>部件模型迭代方案</strong>。", "更新已有模型的<strong>字段映射、规则参数、屏蔽工况、回归样本</strong>。"],
+          decision: ["人工确认迭代是否满足 CBB 验收口径，是否需要重新与需求方确认。"],
+          branch: ["完成迭代：更新模型库、字段映射和版本说明。", "出现新部件风险：回到<strong>需求进入</strong>形成下一轮需求。"],
+          outputs: ["模型版本更新记录", "字段/规则变更说明", "需求方复盘结论", "新一轮需求 Backlog"]
         }
       }
     };
@@ -1391,23 +1324,24 @@
         const expanded = expandedFlows.has(step.id);
         const classes = [
           "flow-stage",
-          step.type === "human" ? "human" : "agent",
+          step.roles.includes("human") ? "human" : "agent",
           !inPath ? "muted" : "",
           pathHot ? "path-hot" : "",
-          expanded ? "expanded" : ""
+          expanded ? "expanded" : "",
+          step.kind || ""
         ].join(" ");
-        const nodeTone = step.type === "human" ? "human" : "agent";
         return `
           <div class="${classes}" style="${pathStyle(step, inPath)}">
-            <button class="flow-node" data-flow="${step.id}" aria-expanded="${expanded}">
+            <button class="flow-node ${step.kind || ""}" data-flow="${step.id}" aria-expanded="${expanded}">
               <span class="step-no">${String(index + 1).padStart(2, "0")}</span>
               <span>
                 <h3>${step.title}</h3>
                 <p>${step.summary}</p>
               </span>
-              <span class="node-type ${step.type === "human" ? "human-label" : "agent-label"}">${step.type === "human" ? "人工" : "Agent"}</span>
+              <span class="node-tags">${step.roles.map((role) => `<span class="node-type ${role === "human" ? "human-label" : "agent-label"}">${role === "human" ? "人工" : "Agent"}</span>`).join("")}</span>
+              ${step.branch ? `<span class="branch-note">${step.branch.map((item) => `<span>${item}</span>`).join("")}</span>` : ""}
             </button>
-            ${expanded ? buildFlowDetail(step, nodeTone) : ""}
+            ${expanded ? buildFlowDetail(step) : ""}
           </div>
         `;
       }).join("");
@@ -1431,25 +1365,26 @@
       return inPath ? `--path-color:${sourceColor}; --path-soft:${sourceSoft}; --path-glow:${sourceGlow};` : "";
     }
 
-    function buildFlowDetail(step, tone) {
+    function buildFlowDetail(step) {
       const detail = getSourceDetail(step);
+      const agentSection = step.roles.includes("agent") && detail.agent?.length
+        ? `<div class="detail-section agent"><small>Agent 执行内容</small><ul>${detail.agent.map((item) => `<li>${item}</li>`).join("")}</ul></div>`
+        : "";
+      const humanSection = step.roles.includes("human") && detail.human?.length
+        ? `<div class="detail-section human"><small>人工判断内容</small><ul>${detail.human.map((item) => `<li>${item}</li>`).join("")}</ul></div>`
+        : "";
+      const branchSection = detail.branch?.length
+        ? `<div class="detail-section branch"><small>判断分支</small><ul>${detail.branch.map((item) => `<li>${item}</li>`).join("")}</ul></div>`
+        : "";
       const outputItems = detail.outputs.map((item) => `<li>${item}</li>`).join("");
-      const supportItems = detail.support.map((item) => `<li>${item}</li>`).join("");
-      const decisionItems = detail.decision.map((item) => `<li>${item}</li>`).join("");
-      const outputLabel = step.type === "human" ? "人工确认后的明确交付物" : "Agent 可直接生成/草拟的交付物";
       return `
-        <div class="flow-detail ${tone}">
-          <h4>${step.title}｜${step.type === "human" ? "人工关键门" : "Agent 提效环节"}</h4>
-          <div class="detail-section">
-            <small>${step.type === "human" ? "Agent 辅助准备" : "Agent 自动化优势"}</small>
-            <ul>${supportItems}</ul>
-          </div>
-          <div class="detail-section">
-            <small>${step.type === "human" ? "人工介入必要性" : "人工边界"}</small>
-            <ul>${decisionItems}</ul>
-          </div>
-          <div class="detail-section">
-            <small>${outputLabel}</small>
+        <div class="flow-detail ${step.roles.join(" ")}">
+          <h4>${step.title}｜${flowDetailTitle(step)}</h4>
+          ${agentSection}
+          ${humanSection}
+          ${branchSection}
+          <div class="detail-section output">
+            <small>明确交付物</small>
             <ul>${outputItems}</ul>
           </div>
         </div>
@@ -1457,11 +1392,18 @@
     }
 
     function getSourceDetail(step) {
-      return sourceFlowDetails[activeSource]?.[step.id] || {
-        support: step.support,
-        decision: step.decision,
-        outputs: step.outputs
+      const detail = sourceFlowDetails[activeSource]?.[step.id] || {};
+      return {
+        agent: detail.agent || detail.support || [],
+        human: detail.human || detail.decision || [],
+        branch: detail.branch || step.branch || [],
+        outputs: detail.outputs || ["待生成交付物"]
       };
+    }
+
+    function flowDetailTitle(step) {
+      if (step.roles.length > 1) return step.kind === "loop" ? "迭代回环节点" : "判断分支节点";
+      return step.roles[0] === "agent" ? "Agent 自动化节点" : "人工决策节点";
     }
 
     sourceButtons.forEach((button) => {
