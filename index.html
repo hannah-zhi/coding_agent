@@ -341,7 +341,8 @@
     }
 
     .flow-chart-wrap {
-      overflow-x: auto;
+      position: relative;
+      overflow: visible;
       padding-bottom: 6px;
     }
 
@@ -369,9 +370,20 @@
       opacity: 0.24;
     }
 
+    .edge-label-bg {
+      fill: rgba(4, 13, 20, 0.9);
+      stroke: rgba(122, 211, 255, 0.24);
+      stroke-width: 1;
+    }
+
     .flow-label {
-      fill: #a8bfce;
+      fill: #d8edf8;
       font-size: 12px;
+      font-weight: 800;
+      paint-order: stroke;
+      stroke: rgba(4, 13, 20, 0.9);
+      stroke-width: 3px;
+      stroke-linejoin: round;
     }
 
     .flow-label.path-hot {
@@ -417,32 +429,68 @@
       font-size: 12px;
     }
 
-    .svg-node .badge {
-      font-size: 11px;
-      font-weight: 850;
-      letter-spacing: 0.02em;
-    }
-
-    .svg-node .badge.agent {
-      fill: #9ff2ff;
-    }
-
-    .svg-node .badge.human {
-      fill: #ffe0a8;
-    }
-
     .svg-node .number {
       fill: #dff8ff;
       font-size: 12px;
       font-weight: 850;
     }
 
+    .svg-node-tag-wrap {
+      display: flex;
+      justify-content: flex-end;
+      gap: 6px;
+      width: 100%;
+      height: 24px;
+      overflow: visible;
+      font-family: "Inter", "Segoe UI", "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+    }
+
+    .svg-node-tag {
+      display: inline-flex;
+      align-items: center;
+      height: 22px;
+      padding: 0 9px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 850;
+      letter-spacing: 0.02em;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
+      white-space: nowrap;
+    }
+
+    .svg-node-tag.agent {
+      border: 1px solid rgba(34, 216, 255, 0.44);
+      background: #062332;
+      color: #9ff2ff;
+    }
+
+    .svg-node-tag.human {
+      border: 1px solid rgba(255, 189, 89, 0.5);
+      background: #2b210f;
+      color: #ffe0a8;
+    }
+
     .flow-detail-layer {
-      position: relative;
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
-      margin-top: 14px;
+      display: none;
+    }
+
+    .node-popover-layer {
+      position: absolute;
+      inset: 0;
+      min-width: 1120px;
+      height: 545px;
+      pointer-events: none;
+    }
+
+    .node-popover {
+      position: absolute;
+      width: 320px;
+      pointer-events: auto;
+      z-index: 5;
+    }
+
+    .node-popover .flow-detail {
+      margin-top: 0;
     }
 
     .node-tags {
@@ -935,6 +983,7 @@
 
         <div class="flow-chart-wrap" aria-label="完整算法开发流程">
           <svg class="flow-chart" id="flowChart" viewBox="0 0 1120 545" role="img" aria-label="带分支和回环的算法开发流程图"></svg>
+          <div class="node-popover-layer" id="nodePopoverLayer" aria-live="polite"></div>
         </div>
         <div class="flow-detail-layer" id="flowDetailLayer" aria-live="polite"></div>
       </div>
@@ -1043,11 +1092,11 @@
 
     const flowEdges = [
       { paths: ["battery", "cbb"], d: "M210 258 L245 236" },
-      { paths: ["battery", "cbb"], d: "M435 203 C455 130, 460 108, 480 108", label: { x: 448, y: 142, text: "不可合并：新模型开发" } },
-      { paths: ["battery", "cbb"], d: "M435 269 C455 330, 458 403, 480 403", label: { x: 440, y: 350, text: "可合并：迭代已有模型" } },
+      { paths: ["battery", "cbb"], d: "M435 203 C455 130, 460 108, 480 108", label: { x: 535, y: 86, w: 158, text: "不可合并：新模型开发" } },
+      { paths: ["battery", "cbb"], d: "M435 269 C455 330, 458 403, 480 403", label: { x: 535, y: 345, w: 158, text: "可合并：迭代已有模型" } },
       { paths: ["battery", "cbb"], d: "M650 108 L690 108" },
-      { paths: ["battery"], d: "M860 108 C880 80, 885 58, 900 58", label: { x: 872, y: 74, text: "电池特征" } },
-      { paths: ["cbb"], d: "M860 108 C885 130, 885 173, 900 173", label: { x: 872, y: 158, text: "CBB 字段" } },
+      { paths: ["battery"], d: "M860 108 C880 80, 885 58, 900 58", label: { x: 895, y: 78, w: 82, text: "电池特征" } },
+      { paths: ["cbb"], d: "M860 108 C885 130, 885 173, 900 173", label: { x: 895, y: 155, w: 82, text: "CBB 字段" } },
       { paths: ["battery"], d: "M985 96 C1015 190, 920 283, 860 283" },
       { paths: ["cbb"], d: "M985 211 C1010 255, 920 283, 860 283" },
       { paths: ["battery", "cbb"], d: "M690 283 C640 305, 540 340, 565 365" },
@@ -1055,7 +1104,7 @@
       { paths: ["battery", "cbb"], d: "M860 403 L900 403" },
       { paths: ["battery", "cbb"], d: "M985 441 L985 460" },
       { paths: ["battery", "cbb"], d: "M900 498 L670 498" },
-      { paths: ["battery", "cbb"], d: "M480 498 C300 520, 130 470, 125 296", label: { x: 230, y: 526, text: "发现新问题：回到需求进入" } }
+      { paths: ["battery", "cbb"], d: "M480 498 C300 520, 130 470, 125 296", label: { x: 290, y: 518, w: 190, text: "发现新问题：回到需求进入" } }
     ];
 
     const sourceFlowDetails = {
@@ -1345,6 +1394,7 @@
 
     const flowChart = document.getElementById("flowChart");
     const flowDetailLayer = document.getElementById("flowDetailLayer");
+    const nodePopoverLayer = document.getElementById("nodePopoverLayer");
     const sourceButtons = document.querySelectorAll(".source-btn");
     const demoSteps = document.getElementById("demoSteps");
 
@@ -1372,10 +1422,11 @@
         });
       });
 
-      flowDetailLayer.innerHTML = [...expandedFlows]
+      flowDetailLayer.innerHTML = "";
+      nodePopoverLayer.innerHTML = [...expandedFlows]
         .map((id) => flowSteps.find((step) => step.id === id))
         .filter(Boolean)
-        .map((step) => buildFlowDetail(step))
+        .map((step) => buildNodePopover(step))
         .join("");
     }
 
@@ -1390,8 +1441,19 @@
     function renderEdge(edge, style) {
       const hot = edge.paths.includes(activeSource);
       const classes = ["flow-link", hot ? "path-hot" : "muted"].join(" ");
-      const label = edge.label ? `<text class="flow-label ${hot ? "path-hot" : ""}" x="${edge.label.x}" y="${edge.label.y}">${edge.label.text}</text>` : "";
+      const label = edge.label ? renderEdgeLabel(edge.label, hot) : "";
       return `<path class="${classes}" style="--path-color:${style.color};--path-glow:${style.glow}" d="${edge.d}"></path>${label}`;
+    }
+
+    function renderEdgeLabel(label, hot) {
+      const width = label.w || Math.max(110, label.text.length * 12);
+      const height = 24;
+      const x = label.x - width / 2;
+      const y = label.y - 17;
+      return `
+        <rect class="edge-label-bg" x="${x}" y="${y}" width="${width}" height="${height}" rx="12"></rect>
+        <text class="flow-label ${hot ? "path-hot" : ""}" x="${label.x}" y="${label.y}" text-anchor="middle">${label.text}</text>
+      `;
     }
 
     function renderSvgNode(node, index, style) {
@@ -1399,22 +1461,39 @@
       const hot = step.paths.includes(activeSource);
       const expanded = expandedFlows.has(node.id);
       const classes = ["svg-node", hot ? "path-hot" : "muted", expanded ? "expanded" : ""].join(" ");
-      const badges = step.roles.map((role, i) => `
-        <text class="badge ${role === "human" ? "human" : "agent"}" x="${node.x + node.w - 52 - i * 45}" y="${node.y + 18}">${role === "human" ? "人工" : "Agent"}</text>
-      `).join("");
+      const tagWidth = step.roles.length > 1 ? 112 : 62;
+      const badges = `
+        <foreignObject x="${node.x + node.w - tagWidth - 10}" y="${node.y - 12}" width="${tagWidth}" height="28">
+          <div xmlns="http://www.w3.org/1999/xhtml" class="svg-node-tag-wrap">
+            ${step.roles.map((role) => `<span class="svg-node-tag ${role === "human" ? "human" : "agent"}">${role === "human" ? "人工" : "Agent"}</span>`).join("")}
+          </div>
+        </foreignObject>
+      `;
       const shape = node.shape === "diamond"
         ? `<polygon class="shape" points="${node.x + node.w / 2},${node.y} ${node.x + node.w},${node.y + node.h / 2} ${node.x + node.w / 2},${node.y + node.h} ${node.x},${node.y + node.h / 2}"></polygon>`
         : `<rect class="shape" x="${node.x}" y="${node.y}" width="${node.w}" height="${node.h}" rx="${node.kind === "loop" ? 26 : 20}"></rect>`;
+      const titleX = node.shape === "diamond" ? node.x + node.w / 2 : node.x + 52;
+      const titleAnchor = node.shape === "diamond" ? "middle" : "start";
+      const summaryX = titleX;
+      const titleY = node.shape === "diamond" ? node.y + 56 : node.y + 34;
+      const summaryY = node.shape === "diamond" ? node.y + 78 : node.y + 56;
       return `
         <g class="${classes}" data-flow="${node.id}" style="--path-color:${style.color};--path-glow:${style.glow}">
           ${shape}
           <circle cx="${node.x + 28}" cy="${node.y + node.h / 2}" r="15" fill="rgba(255,255,255,0.08)"></circle>
           <text class="number" x="${node.x + 20}" y="${node.y + node.h / 2 + 4}">${String(index + 1).padStart(2, "0")}</text>
-          <text class="title" x="${node.x + 52}" y="${node.y + 34}">${step.title}</text>
-          <text class="summary" x="${node.x + 52}" y="${node.y + 56}">${step.summary}</text>
+          <text class="title" x="${titleX}" y="${titleY}" text-anchor="${titleAnchor}">${step.title}</text>
+          <text class="summary" x="${summaryX}" y="${summaryY}" text-anchor="${titleAnchor}">${step.summary}</text>
           ${badges}
         </g>
       `;
+    }
+
+    function buildNodePopover(step) {
+      const node = flowNodes.find((item) => item.id === step.id);
+      const x = Math.min(Math.max(node.x, 10), 790);
+      const y = node.y + node.h + 10;
+      return `<div class="node-popover" style="left:${x}px; top:${y}px">${buildFlowDetail(step)}</div>`;
     }
 
     function buildFlowDetail(step) {
