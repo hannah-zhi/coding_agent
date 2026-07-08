@@ -497,13 +497,16 @@
 
     .node-popover {
       position: absolute;
-      width: 360px;
+      width: min(420px, calc(100% - 24px));
       pointer-events: auto;
       z-index: 50;
     }
 
     .node-popover .flow-detail {
       margin-top: 0;
+      max-height: 720px;
+      overflow: auto;
+      scrollbar-width: thin;
     }
 
     .node-tags {
@@ -1441,6 +1444,7 @@
         .filter(Boolean)
         .map((step) => buildNodePopover(step))
         .join("");
+      requestAnimationFrame(positionNodePopovers);
     }
 
     function pathStyleVars() {
@@ -1507,10 +1511,62 @@
     }
 
     function buildNodePopover(step) {
-      const node = flowNodes.find((item) => item.id === step.id);
-      const x = Math.min(Math.max(node.x, 10), 1120);
-      const y = node.y + node.h + 14;
-      return `<div class="node-popover" style="left:${x}px; top:${y}px">${buildFlowDetail(step)}</div>`;
+      return `<div class="node-popover" data-flow="${step.id}" style="visibility:hidden">${buildFlowDetail(step)}</div>`;
+    }
+
+    function positionNodePopovers() {
+      const chartWidth = flowChart.clientWidth || 1500;
+      const chartHeight = flowChart.clientHeight || 760;
+      const scaleX = chartWidth / 1500;
+      const scaleY = chartHeight / 760;
+      const gap = 14;
+      const pad = 12;
+
+      nodePopoverLayer.querySelectorAll(".node-popover").forEach((popover) => {
+        const node = flowNodes.find((item) => item.id === popover.dataset.flow);
+        if (!node) return;
+
+        popover.style.maxHeight = `${Math.max(260, chartHeight - pad * 2)}px`;
+        popover.style.left = "0px";
+        popover.style.top = "0px";
+
+        const popoverWidth = popover.offsetWidth;
+        const popoverHeight = Math.min(popover.offsetHeight, chartHeight - pad * 2);
+        const left = node.x * scaleX;
+        const top = node.y * scaleY;
+        const width = node.w * scaleX;
+        const height = node.h * scaleY;
+        const centerX = left + width / 2;
+        const centerY = top + height / 2;
+
+        const placements = [
+          { name: "bottom", x: centerX - popoverWidth / 2, y: top + height + gap },
+          { name: "top", x: centerX - popoverWidth / 2, y: top - popoverHeight - gap },
+          { name: "left", x: left - popoverWidth - gap, y: centerY - popoverHeight / 2 },
+          { name: "right", x: left + width + gap, y: centerY - popoverHeight / 2 }
+        ];
+
+        const fits = (place) =>
+          place.x >= pad &&
+          place.y >= pad &&
+          place.x + popoverWidth <= chartWidth - pad &&
+          place.y + popoverHeight <= chartHeight - pad;
+        const best = placements.find(fits) || placements.reduce((bestPlace, place) => {
+          const overflow =
+            Math.max(0, pad - place.x) +
+            Math.max(0, pad - place.y) +
+            Math.max(0, place.x + popoverWidth - chartWidth + pad) +
+            Math.max(0, place.y + popoverHeight - chartHeight + pad);
+          return overflow < bestPlace.overflow ? { ...place, overflow } : bestPlace;
+        }, { ...placements[0], overflow: Number.POSITIVE_INFINITY });
+
+        const x = Math.min(Math.max(best.x, pad), Math.max(pad, chartWidth - popoverWidth - pad));
+        const y = Math.min(Math.max(best.y, pad), Math.max(pad, chartHeight - popoverHeight - pad));
+        popover.dataset.placement = best.name;
+        popover.style.left = `${Math.round(x)}px`;
+        popover.style.top = `${Math.round(y)}px`;
+        popover.style.visibility = "visible";
+      });
     }
 
     function buildFlowDetail(step) {
@@ -1644,6 +1700,10 @@
         activeDemoStep = 0;
         renderScenario();
       });
+    });
+
+    window.addEventListener("resize", () => {
+      if (expandedFlows.size) requestAnimationFrame(positionNodePopovers);
     });
 
     renderFlow();
