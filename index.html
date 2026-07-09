@@ -498,7 +498,7 @@
     .node-popover {
       position: absolute;
       width: min(420px, calc(100% - 24px));
-      pointer-events: auto;
+      pointer-events: none;
       z-index: 50;
     }
 
@@ -624,45 +624,24 @@
       color: #bafcda;
     }
 
-    .detail-section.skill {
-      border: 1px solid rgba(34, 216, 255, 0.24);
-      border-radius: 13px;
-      padding: 12px;
-      background:
-        linear-gradient(135deg, rgba(34, 216, 255, 0.12), rgba(66, 242, 161, 0.07)),
-        rgba(255, 255, 255, 0.035);
-    }
-
     .skill-cards {
-      display: grid;
-      gap: 9px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 0 0 12px;
     }
 
     .skill-card {
-      border: 1px solid rgba(154, 226, 255, 0.24);
-      border-radius: 12px;
-      padding: 10px;
-      background: rgba(4, 16, 25, 0.76);
-    }
-
-    .skill-card strong {
       display: inline-flex;
-      margin-bottom: 6px;
+      align-items: center;
+      border: 1px solid rgba(154, 226, 255, 0.24);
+      border-radius: 999px;
+      padding: 7px 10px;
+      background: rgba(4, 16, 25, 0.76);
       color: #9ff2ff;
       font-size: 13px;
-    }
-
-    .skill-card p {
-      margin: 0 0 6px;
-      color: #d7edf7;
-      font-size: 12px;
-      line-height: 1.55;
-    }
-
-    .skill-card em {
-      color: #bafcda;
-      font-style: normal;
-      font-weight: 800;
+      line-height: 1;
+      font-weight: 850;
     }
 
     .demo {
@@ -1134,28 +1113,13 @@
 
     const skillCatalog = {
       requirement: {
-        name: "需求解析 Skill",
-        template: "需求任务卡 / 澄清问题清单 / 复用判断表",
-        points: [
-          "把机理假设或 CBB 文档转成结构化任务卡。",
-          "规范风险对象、输入信号、适用边界、待确认问题。"
-        ]
+        name: "需求解析 Skill"
       },
       data: {
-        name: "数据提取 Skill",
-        template: "SQL 生成规范 / 样本筛选表 / 数据质量检查模板",
-        points: [
-          "按字段白名单、时间窗口、样本口径生成可审计查询。",
-          "固化缺失、异常、采样频率、干扰工况检查项。"
-        ]
+        name: "数据提取 Skill"
       },
       algorithm: {
-        name: "算法逻辑设计 Skill",
-        template: "算法逻辑说明 / 风险等级解释 / 参数与测试用例模板",
-        points: [
-          "把特征证据转成规则或模型原型、风险等级和屏蔽条件。",
-          "约束评审材料、代码草稿、单测和迭代建议的输出结构。"
-        ]
+        name: "算法逻辑设计 Skill"
       }
     };
 
@@ -1640,14 +1604,10 @@
     function buildFlowDetail(step) {
       const detail = getSourceDetail(step);
       const skillSection = step.skills?.length
-        ? `<div class="detail-section skill"><small>调用 Skill / 标准模板</small><div class="skill-cards">${step.skills.map((id) => {
+        ? `<div class="skill-cards">${step.skills.map((id) => {
           const skill = skillCatalog[id];
-          return `<div class="skill-card">
-            <strong>${skill.name}</strong>
-            <p><em>模板约束：</em>${skill.template}</p>
-            <p>${skill.points.join(" ")}</p>
-          </div>`;
-        }).join("")}</div></div>`
+          return `<span class="skill-card">${skill.name}</span>`;
+        }).join("")}</div>`
         : "";
       const agentSection = step.roles.includes("agent") && detail.agent?.length
         ? `<div class="detail-section agent"><small>Agent 执行内容</small><ul>${detail.agent.map((item) => `<li>${item}</li>`).join("")}</ul></div>`
