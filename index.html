@@ -1151,33 +1151,33 @@
       { id: "intake", x: 40, y: 80, w: 200, h: 76 },
       { id: "req_review", x: 285, y: 45, w: 220, h: 146, shape: "diamond" },
       { id: "understand", x: 560, y: 45, w: 240, h: 146, shape: "diamond" },
-      { id: "eda", x: 855, y: 80, w: 200, h: 76 },
-      { id: "feature", x: 1110, y: 80, w: 210, h: 76 },
-      { id: "logic", x: 1210, y: 300, w: 220, h: 80 },
+      { id: "eda", x: 900, y: 80, w: 200, h: 76 },
+      { id: "feature", x: 1160, y: 80, w: 210, h: 76 },
+      { id: "logic", x: 1210, y: 290, w: 220, h: 80 },
       { id: "review", x: 900, y: 255, w: 230, h: 150, shape: "diamond" },
       { id: "code", x: 610, y: 255, w: 230, h: 150, shape: "diamond" },
       { id: "deploy", x: 365, y: 292, w: 200, h: 76 },
       { id: "ops", x: 90, y: 255, w: 230, h: 150, shape: "diamond" },
-      { id: "iteration", x: 600, y: 500, w: 220, h: 80, kind: "loop" }
+      { id: "iteration", x: 600, y: 550, w: 220, h: 80, kind: "loop" }
     ];
 
     const flowEdges = [
       { paths: ["cbb"], d: "M240 118 L285 118" },
       { paths: ["cbb"], d: "M505 118 L560 118", label: { x: 532, y: 92, w: 92, text: "评审通过" } },
       { paths: ["cbb"], d: "M395 191 L395 225 L140 225 L140 156", label: { x: 265, y: 210, w: 150, text: "评审不通过：补充需求" } },
-      { paths: ["cbb"], d: "M800 118 L855 118", label: { x: 910, y: 64, w: 190, text: "不可合并：新模型开发" } },
-      { paths: ["cbb"], d: "M680 45 L680 24 L1320 24 L1320 300", label: { x: 1110, y: 52, w: 190, text: "可合并：迭代已有模型" } },
-      { paths: ["battery", "cbb"], d: "M1055 118 L1110 118" },
-      { paths: ["battery", "cbb"], d: "M1215 156 L1215 225 L1320 225 L1320 300" },
+      { paths: ["cbb"], d: "M800 118 L900 118", label: { x: 850, y: 142, w: 126, h: 40, lines: ["不可合并：", "新模型开发"] } },
+      { paths: ["cbb"], d: "M680 45 L680 24 L1420 24 L1420 255 L1320 255 L1320 290", label: { x: 1135, y: 52, w: 190, text: "可合并：迭代已有模型" } },
+      { paths: ["battery", "cbb"], d: "M1100 118 L1160 118" },
+      { paths: ["battery", "cbb"], d: "M1265 156 L1265 220 L1320 220 L1320 290" },
       { paths: ["battery", "cbb"], d: "M1210 340 L1160 340 L1160 330 L1130 330" },
       { paths: ["battery", "cbb"], d: "M900 330 L840 330", label: { x: 870, y: 305, w: 92, text: "评审通过" } },
       { paths: ["battery", "cbb"], d: "M610 330 L565 330", label: { x: 588, y: 305, w: 92, text: "测试通过" } },
       { paths: ["battery", "cbb"], d: "M365 330 L320 330" },
-      { paths: ["battery", "cbb"], d: "M1015 405 L1015 450 L1200 450 L1200 360 L1210 360", label: { x: 1105, y: 438, w: 180, text: "评审不通过：回到设计" } },
+      { paths: ["battery", "cbb"], d: "M1015 405 L1015 450 L1200 450 L1200 350 L1210 350", label: { x: 1105, y: 438, w: 180, text: "评审不通过：回到设计" } },
       { paths: ["battery", "cbb"], d: "M725 405 L725 495 L1460 495 L1460 340 L1430 340", label: { x: 1090, y: 480, w: 180, text: "测试不通过：回到设计" } },
-      { paths: ["battery", "cbb"], d: "M320 330 L320 540 L600 540", label: { x: 470, y: 525, w: 110, text: "需要迭代" } },
+      { paths: ["battery", "cbb"], d: "M320 330 L320 590 L600 590", label: { x: 470, y: 575, w: 110, text: "需要迭代" } },
       { paths: ["battery", "cbb"], d: "M90 330 L45 330 L45 455 L205 455 L205 405", label: { x: 120, y: 475, w: 170, text: "无需迭代：持续监测" } },
-      { paths: ["battery", "cbb"], d: "M820 540 L930 540 L930 620 L1320 620 L1320 380", label: { x: 1110, y: 605, w: 120, text: "下一轮优化" } }
+      { paths: ["battery", "cbb"], d: "M820 590 L930 590 L930 670 L1320 670 L1320 370", label: { x: 1110, y: 655, w: 120, text: "下一轮优化" } }
     ];
 
     const sourceFlowDetails = {
@@ -1503,13 +1503,17 @@
     }
 
     function renderEdgeLabel(label, hot) {
-      const width = label.w || Math.max(110, label.text.length * 12);
-      const height = 24;
+      const lines = label.lines || [label.text];
+      const width = label.w || Math.max(110, lines.join("").length * 12);
+      const height = label.h || (lines.length > 1 ? 40 : 24);
       const x = label.x - width / 2;
       const y = label.y - 17;
+      const text = lines.map((line, index) =>
+        `<tspan x="${label.x}" dy="${index === 0 ? 0 : 16}">${line}</tspan>`
+      ).join("");
       return `
         <rect class="edge-label-bg" x="${x}" y="${y}" width="${width}" height="${height}" rx="12"></rect>
-        <text class="flow-label ${hot ? "path-hot" : ""}" x="${label.x}" y="${label.y}" text-anchor="middle">${label.text}</text>
+        <text class="flow-label ${hot ? "path-hot" : ""}" x="${label.x}" y="${label.y}" text-anchor="middle">${text}</text>
       `;
     }
 
