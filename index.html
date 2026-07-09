@@ -582,17 +582,16 @@
     }
 
     .detail-section small {
-      display: inline-flex;
+      display: block;
       align-items: center;
       gap: 6px;
       margin-bottom: 8px;
-      padding: 5px 9px;
-      border-radius: 999px;
-      border: 1px solid rgba(122, 211, 255, 0.18);
-      background: rgba(255, 255, 255, 0.04);
-      color: #c8edfb;
+      padding: 0 0 0 10px;
+      border-left: 3px solid rgba(122, 211, 255, 0.46);
+      color: #b9d9e8;
       font-size: 12px;
-      font-weight: 750;
+      font-weight: 850;
+      letter-spacing: 0.03em;
     }
 
     .detail-section ul {
@@ -634,14 +633,24 @@
     .skill-card {
       display: inline-flex;
       align-items: center;
-      border: 1px solid rgba(154, 226, 255, 0.24);
+      gap: 7px;
+      border: 1px dashed rgba(98, 184, 255, 0.55);
       border-radius: 999px;
-      padding: 7px 10px;
-      background: rgba(4, 16, 25, 0.76);
-      color: #9ff2ff;
-      font-size: 13px;
+      padding: 6px 10px 6px 8px;
+      background: rgba(34, 216, 255, 0.09);
+      color: #baf4ff;
+      font-size: 12px;
       line-height: 1;
       font-weight: 850;
+    }
+
+    .skill-card::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #42f2a1;
+      box-shadow: 0 0 10px rgba(66, 242, 161, 0.55);
     }
 
     .demo {
