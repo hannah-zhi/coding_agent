@@ -624,6 +624,47 @@
       color: #bafcda;
     }
 
+    .detail-section.skill {
+      border: 1px solid rgba(34, 216, 255, 0.24);
+      border-radius: 13px;
+      padding: 12px;
+      background:
+        linear-gradient(135deg, rgba(34, 216, 255, 0.12), rgba(66, 242, 161, 0.07)),
+        rgba(255, 255, 255, 0.035);
+    }
+
+    .skill-cards {
+      display: grid;
+      gap: 9px;
+    }
+
+    .skill-card {
+      border: 1px solid rgba(154, 226, 255, 0.24);
+      border-radius: 12px;
+      padding: 10px;
+      background: rgba(4, 16, 25, 0.76);
+    }
+
+    .skill-card strong {
+      display: inline-flex;
+      margin-bottom: 6px;
+      color: #9ff2ff;
+      font-size: 13px;
+    }
+
+    .skill-card p {
+      margin: 0 0 6px;
+      color: #d7edf7;
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .skill-card em {
+      color: #bafcda;
+      font-style: normal;
+      font-weight: 800;
+    }
+
     .demo {
       overflow: hidden;
     }
@@ -1077,19 +1118,46 @@
 
   <script>
     const flowSteps = [
-      { id: "intake", title: "需求进入", summary: "机理假设 / CBB 文档", roles: ["human"], paths: ["battery", "cbb"] },
-      { id: "understand", title: "场景理解与复用判断", summary: "是否合并已有模型", roles: ["agent", "human"], paths: ["battery", "cbb"], kind: "decision", branch: ["可合并：迭代已有模型", "不可合并：新模型开发"] },
-      { id: "data", title: "数据提取", summary: "NL → SQL / 样本筛选", roles: ["agent"], paths: ["battery", "cbb"] },
-      { id: "eda", title: "EDA 探索", summary: "趋势 / 分布 / 异常片段", roles: ["agent"], paths: ["battery", "cbb"] },
-      { id: "feature", title: "特征发现", summary: "电池候选特征", roles: ["agent"], paths: ["battery"] },
-      { id: "mapping", title: "字段/指标映射", summary: "CBB 指标 → 生产字段", roles: ["agent"], paths: ["cbb"] },
-      { id: "confirm", title: "需求/机理确认", summary: "冻结关键口径", roles: ["human"], paths: ["battery", "cbb"] },
-      { id: "logic", title: "模型/规则设计", summary: "新建或迭代方案", roles: ["agent"], paths: ["battery", "cbb"] },
-      { id: "review", title: "算法评审", summary: "解释性 / 上线风险", roles: ["human"], paths: ["battery", "cbb"] },
-      { id: "code", title: "代码测试", summary: "代码草稿 / 单测", roles: ["agent"], paths: ["battery", "cbb"] },
-      { id: "ops", title: "上线监控", summary: "触发效果 / 误报反馈", roles: ["agent"], paths: ["battery", "cbb"] },
-      { id: "iteration", title: "模型迭代闭环", summary: "更新模型库 → 新一轮流程", roles: ["agent", "human"], paths: ["battery", "cbb"], kind: "loop", branch: ["完成迭代：更新已有模型", "发现新问题：回到需求进入"] }
+      { id: "intake", title: "需求进入", summary: "机理假设 / CBB 文档", roles: ["human"], paths: ["battery", "cbb"], skills: ["requirement"] },
+      { id: "understand", title: "场景理解与复用判断", summary: "是否合并已有模型", roles: ["agent", "human"], paths: ["battery", "cbb"], skills: ["requirement"], kind: "decision", branch: ["可合并：迭代已有模型", "不可合并：新模型开发"] },
+      { id: "data", title: "数据提取", summary: "NL → SQL / 样本筛选", roles: ["agent"], paths: ["battery", "cbb"], skills: ["data"] },
+      { id: "eda", title: "EDA 探索", summary: "趋势 / 分布 / 异常片段", roles: ["agent"], paths: ["battery", "cbb"], skills: ["data"] },
+      { id: "feature", title: "特征发现", summary: "电池候选特征", roles: ["agent"], paths: ["battery"], skills: ["data", "algorithm"] },
+      { id: "mapping", title: "字段/指标映射", summary: "CBB 指标 → 生产字段", roles: ["agent"], paths: ["cbb"], skills: ["requirement", "data"] },
+      { id: "confirm", title: "需求/机理确认", summary: "冻结关键口径", roles: ["human"], paths: ["battery", "cbb"], skills: ["requirement"] },
+      { id: "logic", title: "模型/规则设计", summary: "新建或迭代方案", roles: ["agent"], paths: ["battery", "cbb"], skills: ["algorithm"] },
+      { id: "review", title: "算法评审", summary: "解释性 / 上线风险", roles: ["human"], paths: ["battery", "cbb"], skills: ["algorithm"] },
+      { id: "code", title: "代码测试", summary: "代码草稿 / 单测", roles: ["agent"], paths: ["battery", "cbb"], skills: ["algorithm"] },
+      { id: "ops", title: "上线监控", summary: "触发效果 / 误报反馈", roles: ["agent"], paths: ["battery", "cbb"], skills: ["data", "algorithm"] },
+      { id: "iteration", title: "模型迭代闭环", summary: "更新模型库 → 新一轮流程", roles: ["agent", "human"], paths: ["battery", "cbb"], skills: ["requirement", "algorithm"], kind: "loop", branch: ["完成迭代：更新已有模型", "发现新问题：回到需求进入"] }
     ];
+
+    const skillCatalog = {
+      requirement: {
+        name: "需求解析 Skill",
+        template: "需求任务卡 / 澄清问题清单 / 复用判断表",
+        points: [
+          "把机理假设或 CBB 文档转成结构化任务卡。",
+          "规范风险对象、输入信号、适用边界、待确认问题。"
+        ]
+      },
+      data: {
+        name: "数据提取 Skill",
+        template: "SQL 生成规范 / 样本筛选表 / 数据质量检查模板",
+        points: [
+          "按字段白名单、时间窗口、样本口径生成可审计查询。",
+          "固化缺失、异常、采样频率、干扰工况检查项。"
+        ]
+      },
+      algorithm: {
+        name: "算法逻辑设计 Skill",
+        template: "算法逻辑说明 / 风险等级解释 / 参数与测试用例模板",
+        points: [
+          "把特征证据转成规则或模型原型、风险等级和屏蔽条件。",
+          "约束评审材料、代码草稿、单测和迭代建议的输出结构。"
+        ]
+      }
+    };
 
     const flowNodes = [
       { id: "intake", x: 50, y: 315, w: 220, h: 86 },
@@ -1571,6 +1639,16 @@
 
     function buildFlowDetail(step) {
       const detail = getSourceDetail(step);
+      const skillSection = step.skills?.length
+        ? `<div class="detail-section skill"><small>调用 Skill / 标准模板</small><div class="skill-cards">${step.skills.map((id) => {
+          const skill = skillCatalog[id];
+          return `<div class="skill-card">
+            <strong>${skill.name}</strong>
+            <p><em>模板约束：</em>${skill.template}</p>
+            <p>${skill.points.join(" ")}</p>
+          </div>`;
+        }).join("")}</div></div>`
+        : "";
       const agentSection = step.roles.includes("agent") && detail.agent?.length
         ? `<div class="detail-section agent"><small>Agent 执行内容</small><ul>${detail.agent.map((item) => `<li>${item}</li>`).join("")}</ul></div>`
         : "";
@@ -1584,6 +1662,7 @@
       return `
         <div class="flow-detail ${step.roles.join(" ")}">
           <h4>${step.title}｜${flowDetailTitle(step)}</h4>
+          ${skillSection}
           ${agentSection}
           ${humanSection}
           ${branchSection}
