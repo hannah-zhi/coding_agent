@@ -361,7 +361,7 @@
 
     .flow-chart {
       width: 100%;
-      height: 760px;
+      height: 620px;
       display: block;
     }
 
@@ -1023,21 +1023,21 @@
         <div class="source-switch" aria-label="需求来源">
           <button class="source-btn battery active" data-source="battery">
             <small>需求来源 A</small>
-            <strong>电池机理驱动</strong>
+            <strong>机理驱动（主导）</strong>
           </button>
           <button class="source-btn cbb" data-source="cbb">
             <small>需求来源 B</small>
-            <strong>CBB 部件需求驱动</strong>
+            <strong>需求驱动（补充）</strong>
           </button>
         </div>
 
         <div class="legend">
-          <span class="pill battery">电池路径</span>
-          <span class="pill cbb">CBB 路径</span>
+          <span class="pill battery">机理驱动路径</span>
+          <span class="pill cbb">需求驱动路径</span>
         </div>
 
         <div class="flow-chart-wrap" aria-label="完整算法开发流程">
-          <svg class="flow-chart" id="flowChart" viewBox="0 0 1500 760" role="img" aria-label="带分支和回环的算法开发流程图"></svg>
+          <svg class="flow-chart" id="flowChart" viewBox="0 0 1500 620" role="img" aria-label="带分支和回环的算法开发流程图"></svg>
           <div class="node-popover-layer" id="nodePopoverLayer" aria-live="polite"></div>
         </div>
         <div class="flow-detail-layer" id="flowDetailLayer" aria-live="polite"></div>
@@ -1116,18 +1116,17 @@
 
   <script>
     const flowSteps = [
-      { id: "intake", title: "需求进入", summary: "机理假设 / CBB 文档", roles: ["human"], paths: ["battery", "cbb"], skills: ["requirement"] },
-      { id: "understand", title: "场景理解与复用判断", summary: "是否合并已有模型", roles: ["agent", "human"], paths: ["battery", "cbb"], skills: ["requirement"], kind: "decision", branch: ["可合并：迭代已有模型", "不可合并：新模型开发"] },
-      { id: "data", title: "数据提取", summary: "NL → SQL / 样本筛选", roles: ["agent"], paths: ["battery", "cbb"], skills: ["data"] },
-      { id: "eda", title: "EDA 探索", summary: "趋势 / 分布 / 异常片段", roles: ["agent"], paths: ["battery", "cbb"], skills: ["data"] },
-      { id: "feature", title: "特征发现", summary: "电池候选特征", roles: ["agent"], paths: ["battery"], skills: ["data", "algorithm"] },
-      { id: "mapping", title: "字段/指标映射", summary: "CBB 指标 → 生产字段", roles: ["agent"], paths: ["cbb"], skills: ["requirement", "data"] },
-      { id: "confirm", title: "需求/机理确认", summary: "冻结关键口径", roles: ["human"], paths: ["battery", "cbb"], skills: ["requirement"] },
-      { id: "logic", title: "模型/规则设计", summary: "新建或迭代方案", roles: ["agent"], paths: ["battery", "cbb"], skills: ["algorithm"] },
-      { id: "review", title: "算法评审", summary: "解释性 / 上线风险", roles: ["human"], paths: ["battery", "cbb"], skills: ["algorithm"] },
-      { id: "code", title: "代码测试", summary: "代码草稿 / 单测", roles: ["agent"], paths: ["battery", "cbb"], skills: ["algorithm"] },
-      { id: "ops", title: "上线监控", summary: "触发效果 / 误报反馈", roles: ["agent"], paths: ["battery", "cbb"], skills: ["data", "algorithm"] },
-      { id: "iteration", title: "模型迭代闭环", summary: "更新模型库 → 新一轮流程", roles: ["agent", "human"], paths: ["battery", "cbb"], skills: ["requirement", "algorithm"], kind: "loop", branch: ["完成迭代：更新已有模型", "发现新问题：回到需求进入"] }
+      { id: "intake", title: "需求提出", summary: "业务诉求结构化", roles: ["agent", "human"], paths: ["cbb"], skills: ["requirement"] },
+      { id: "req_review", title: "需求评审", summary: "价值边界确认", roles: ["human"], paths: ["cbb"], kind: "decision", branch: ["评审通过", "评审不通过"] },
+      { id: "understand", title: "需求拆解", summary: "场景与复用判断", roles: ["agent", "human"], paths: ["cbb"], skills: ["requirement"], kind: "decision", branch: ["可合并：迭代已有模型", "不可合并：新模型开发"] },
+      { id: "eda", title: "数据探索", summary: "样本与信号验证", roles: ["agent"], paths: ["battery", "cbb"], skills: ["data"] },
+      { id: "feature", title: "特征确认", summary: "候选特征定稿", roles: ["agent"], paths: ["battery", "cbb"], skills: ["data", "model"] },
+      { id: "logic", title: "模型设计", summary: "规则与模型方案", roles: ["agent"], paths: ["battery", "cbb"], skills: ["model"] },
+      { id: "review", title: "模型评审", summary: "解释与风险决策", roles: ["human"], paths: ["battery", "cbb"], kind: "decision", branch: ["评审通过", "评审不通过"] },
+      { id: "code", title: "测试验证", summary: "回放与边界测试", roles: ["agent"], paths: ["battery", "cbb"], skills: ["test"], kind: "decision", branch: ["测试通过", "测试不通过"] },
+      { id: "deploy", title: "部署上线", summary: "发布与上线确认", roles: ["agent"], paths: ["battery", "cbb"] },
+      { id: "ops", title: "运营监测", summary: "效果与反馈跟踪", roles: ["agent"], paths: ["battery", "cbb"], skills: ["ops"], kind: "decision", branch: ["需要迭代", "无需迭代"] },
+      { id: "iteration", title: "模型迭代", summary: "版本优化闭环", roles: ["agent", "human"], paths: ["battery", "cbb"], skills: ["model"] }
     ];
 
     const skillCatalog = {
@@ -1137,162 +1136,147 @@
       data: {
         name: "数据提取 Skill"
       },
-      algorithm: {
-        name: "算法逻辑设计 Skill"
+      model: {
+        name: "模型设计 Skill"
+      },
+      test: {
+        name: "模型测试 Skill"
+      },
+      ops: {
+        name: "运营监测 Skill"
       }
     };
 
     const flowNodes = [
-      { id: "intake", x: 50, y: 315, w: 220, h: 86 },
-      { id: "understand", x: 330, y: 270, w: 270, h: 170, shape: "diamond" },
-      { id: "data", x: 720, y: 120, w: 220, h: 86 },
-      { id: "eda", x: 1000, y: 120, w: 220, h: 86 },
-      { id: "feature", x: 1260, y: 60, w: 220, h: 86 },
-      { id: "mapping", x: 1260, y: 205, w: 220, h: 86 },
-      { id: "confirm", x: 1000, y: 355, w: 220, h: 86 },
-      { id: "logic", x: 720, y: 520, w: 220, h: 86 },
-      { id: "review", x: 1000, y: 520, w: 220, h: 86 },
-      { id: "code", x: 1260, y: 520, w: 220, h: 86 },
-      { id: "ops", x: 1260, y: 630, w: 220, h: 86 },
-      { id: "iteration", x: 720, y: 630, w: 240, h: 86, kind: "loop" }
+      { id: "intake", x: 40, y: 70, w: 200, h: 76 },
+      { id: "req_review", x: 285, y: 38, w: 210, h: 138, shape: "diamond" },
+      { id: "understand", x: 555, y: 38, w: 230, h: 138, shape: "diamond" },
+      { id: "eda", x: 835, y: 70, w: 200, h: 76 },
+      { id: "feature", x: 1090, y: 70, w: 200, h: 76 },
+      { id: "logic", x: 1260, y: 250, w: 200, h: 76 },
+      { id: "review", x: 1010, y: 250, w: 200, h: 76 },
+      { id: "code", x: 760, y: 250, w: 200, h: 76 },
+      { id: "deploy", x: 510, y: 250, w: 200, h: 76 },
+      { id: "ops", x: 260, y: 250, w: 200, h: 76 },
+      { id: "iteration", x: 40, y: 250, w: 200, h: 76, kind: "loop" }
     ];
 
     const flowEdges = [
-      { paths: ["battery", "cbb"], d: "M270 358 L330 355" },
-      { paths: ["battery", "cbb"], d: "M600 355 C640 210, 665 163, 720 163", label: { x: 600, y: 190, w: 190, text: "不可合并：新模型开发" } },
-      { paths: ["battery", "cbb"], d: "M600 355 C645 470, 665 563, 720 563", label: { x: 635, y: 525, w: 205, text: "可合并：迭代已有模型" } },
-      { paths: ["battery", "cbb"], d: "M940 163 L1000 163" },
-      { paths: ["battery"], d: "M1220 163 C1240 130, 1245 103, 1260 103", label: { x: 1220, y: 118, w: 100, text: "电池特征" } },
-      { paths: ["cbb"], d: "M1220 163 C1240 190, 1245 248, 1260 248", label: { x: 1205, y: 245, w: 100, text: "CBB 字段" } },
-      { paths: ["battery"], d: "M1370 146 C1410 245, 1330 398, 1220 398" },
-      { paths: ["cbb"], d: "M1370 291 C1410 345, 1320 398, 1220 398" },
-      { paths: ["battery", "cbb"], d: "M1000 398 C900 430, 805 480, 830 520" },
-      { paths: ["battery", "cbb"], d: "M940 563 L1000 563" },
-      { paths: ["battery", "cbb"], d: "M1220 563 L1260 563" },
-      { paths: ["battery", "cbb"], d: "M1370 606 L1370 630" },
-      { paths: ["battery", "cbb"], d: "M1260 673 L960 673" },
-      { paths: ["battery", "cbb"], d: "M720 673 C420 710, 160 620, 160 401", label: { x: 410, y: 730, w: 230, text: "发现新问题：回到需求进入" } }
+      { paths: ["cbb"], d: "M240 108 L285 107" },
+      { paths: ["cbb"], d: "M495 107 L555 107", label: { x: 524, y: 82, w: 90, text: "评审通过" } },
+      { paths: ["cbb"], d: "M390 176 C350 230, 170 220, 140 146", label: { x: 260, y: 222, w: 110, text: "评审不通过" } },
+      { paths: ["cbb"], d: "M785 107 L835 108", label: { x: 810, y: 82, w: 160, text: "不可合并：新模型开发" } },
+      { paths: ["cbb"], d: "M785 107 C1020 18, 1320 40, 1360 250", label: { x: 1110, y: 45, w: 170, text: "可合并：迭代已有模型" } },
+      { paths: ["battery", "cbb"], d: "M1035 108 L1090 108" },
+      { paths: ["battery", "cbb"], d: "M1290 108 C1365 120, 1390 185, 1360 250" },
+      { paths: ["battery", "cbb"], d: "M1260 288 L1210 288" },
+      { paths: ["battery", "cbb"], d: "M1010 288 L960 288" },
+      { paths: ["battery", "cbb"], d: "M760 288 L710 288" },
+      { paths: ["battery", "cbb"], d: "M510 288 L460 288" },
+      { paths: ["battery", "cbb"], d: "M260 288 L240 288" },
+      { paths: ["battery", "cbb"], d: "M1110 326 C1110 405, 1290 405, 1330 326", label: { x: 1225, y: 410, w: 110, text: "评审不通过" } },
+      { paths: ["battery", "cbb"], d: "M860 326 C925 430, 1260 430, 1320 326", label: { x: 1095, y: 455, w: 110, text: "测试不通过" } },
+      { paths: ["battery", "cbb"], d: "M140 326 C240 520, 1190 520, 1330 326", label: { x: 720, y: 540, w: 110, text: "需要迭代" } }
     ];
 
     const sourceFlowDetails = {
       battery: {
-        intake: {
-          support: ["从工程师输入的<strong>失效模式、历史案例、异常现象</strong>中抽取可验证问题。", "自动整理为<strong>机理假设卡</strong>，避免人工反复梳理案例材料。"],
-          decision: ["人工判断该风险是否具备<strong>安全价值</strong>和开发优先级。", "确认是否进入<strong>电池安全预警算法</strong>开发流程。"],
-          outputs: ["电池风险任务卡", "失效模式描述", "样本筛选口径", "优先级建议"]
-        },
-        understand: {
-          support: ["围绕<strong>内短、异常衰退、一致性劣化</strong>整理机理链和特征假设。", "检索已有电池安全模型，自动比对<strong>风险对象、输入特征、触发逻辑、适用边界</strong>。", "输出“可合并/不可合并”的证据清单。"],
-          decision: ["人工判断该需求是否能<strong>合并入已有模型</strong>。", "若机理一致且只需新增特征或调参，则进入<strong>已有模型迭代</strong>；若风险模式不同，则进入新模型开发。"],
-          branch: ["可合并：复用已有模型，后续做特征补充、阈值调整或版本迭代。", "不可合并：作为新模型/新规则进入完整开发流程。"],
-          outputs: ["模型复用判断单", "已有模型差异对比表", "新建/迭代路径建议"]
-        },
-        data: {
-          support: ["自动生成面向电芯/簇/站点的<strong>SQL 和样本筛选条件</strong>。", "批量拉取<strong>单体电压、温度、SOC、压差、告警</strong>等时序数据。"],
-          decision: ["人工确认样本是否覆盖目标失效模式。", "确认排除维护、停机、采集异常等干扰场景。"],
-          outputs: ["电池时序数据集", "SQL 脚本", "样本标签表", "数据质量初检表"]
-        },
         eda: {
-          support: ["自动输出<strong>趋势图、分布统计、异常片段、相关性摘要</strong>。", "对正常样本与疑似风险样本做批量对比，快速定位可用信号。"],
-          decision: ["人工判断异常片段是否有真实工况意义。", "区分电池异常、传感器噪声和采集问题。"],
-          outputs: ["EDA 自动报告", "异常样本清单", "关键图表", "数据可用性结论"]
+          support: ["围绕机理假设自动拉取相关样本，完成<strong>趋势、分布、异常片段</strong>探索。", "识别可用于建模的信号组合和数据质量问题。"],
+          outputs: ["候选特征输入包"]
         },
-        confirm: {
-          support: ["自动准备<strong>机理证据、样本截图、特征表现</strong>和待确认问题。"],
-          decision: ["电池专家确认<strong>机理链、风险等级、处置口径</strong>是否成立。", "这是安全预警责任判断，不能由 Agent 自动替代。"],
-          outputs: ["机理确认记录", "冻结后的风险定义", "评审输入材料"]
+        feature: {
+          support: ["根据数据探索结果生成候选特征，并筛选与风险机理一致的关键特征。"],
+          outputs: ["模型设计输入特征表"]
         },
         logic: {
-          support: ["根据 EDA 与机理确认结果生成<strong>规则/模型原型</strong>。", "自动给出<strong>阈值建议、组合条件、风险等级解释、方案对比</strong>。"],
-          decision: ["人工权衡误报漏报和上线风险。", "确认风险解释能否支撑实际处置动作。"],
-          outputs: ["算法逻辑草案", "风险等级解释", "阈值/窗口参数", "方案对比表"]
+          support: ["基于已确认特征生成模型或规则方案，输出阈值、窗口、屏蔽条件和风险等级草案。"],
+          outputs: ["模型评审输入包"]
         },
         review: {
-          support: ["自动生成<strong>评审材料、样本证据、测试计划、问答清单</strong>。"],
-          decision: ["人工评审<strong>机理合理性、误报漏报、上线边界</strong>。", "决定灰度上线、修改后再评审或暂停。"],
-          outputs: ["评审 PPT/报告", "评审结论", "修改意见清单", "上线约束"]
+          decision: ["人工确认模型解释性、风险等级、误报漏报权衡和上线边界。"],
+          branch: ["评审通过：进入测试验证。", "评审不通过：回到模型设计。"],
+          outputs: ["测试验证输入方案"]
         },
         code: {
-          support: ["把评审通过的逻辑生成<strong>算法代码草稿、单测脚本、边界样本</strong>。", "自动补充参数配置和异常输入保护。"],
-          decision: ["人工做代码审查和测试结果确认。", "确认工程实现没有偏离评审逻辑。"],
-          outputs: ["算法代码草稿", "单测脚本", "边界样本集", "部署参数说明"]
+          support: ["自动生成测试配置、回放脚本和边界样本验证结果。"],
+          branch: ["测试通过：进入部署上线。", "测试不通过：回到模型设计修正。"],
+          outputs: ["上线输入包"]
+        },
+        deploy: {
+          support: ["生成发布配置、上线清单和版本记录。"],
+          outputs: ["运营监测配置"]
         },
         ops: {
-          support: ["自动汇总<strong>触发次数、确认率、误报样本、漏报线索</strong>。", "生成阈值调整和下一版优化建议。"],
-          decision: ["人工决定是否调参、扩大范围或回滚。", "确认迭代优先级和处置责任。"],
-          outputs: ["运行监控日报/周报", "误报漏报样本清单", "迭代 Backlog", "版本优化建议"]
+          support: ["自动监测触发效果、人工确认率、误报样本和漏报线索。"],
+          branch: ["需要迭代：进入模型迭代。", "无需迭代：持续运营监测。"],
+          outputs: ["模型迭代输入"]
         },
         iteration: {
-          support: ["汇总本轮线上效果、评审意见和样本复盘，生成<strong>模型迭代方案</strong>。", "更新已有模型的<strong>特征版本、阈值参数、屏蔽条件、测试集</strong>。"],
-          decision: ["人工确认迭代是否完成、是否需要重新评审，以及是否产生新的风险假设。"],
-          branch: ["完成迭代：更新模型库和版本记录。", "发现新风险：沉淀为新需求，回到<strong>需求进入</strong>开启下一轮。"],
-          outputs: ["模型版本更新记录", "迭代变更说明", "新一轮需求 Backlog"]
+          support: ["汇总线上反馈，生成模型优化方案和版本变更建议。"],
+          decision: ["人工确认是否进入新一轮模型设计或补充数据探索。"],
+          outputs: ["下一轮模型设计输入"]
         }
       },
       cbb: {
         intake: {
-          support: ["从 CBB 需求文档中抽取<strong>部件对象、风险模式、信号指标、验收口径</strong>。", "自动形成待澄清问题，减少工程师手工转写需求。"],
-          decision: ["人工判断需求是否清晰、是否具备数据条件。", "确认需求方、算法方和上线方的责任边界。"],
-          outputs: ["CBB 结构化需求卡", "需求澄清清单", "验收口径草案", "开发优先级建议"]
+          support: ["将需求文档转成结构化任务，抽取部件对象、风险模式、指标口径和验收目标。"],
+          decision: ["人工补充需求背景、确认需求方和算法侧接口。"],
+          outputs: ["需求评审输入卡"]
+        },
+        req_review: {
+          decision: ["人工判断需求价值、数据可行性、业务边界和优先级。"],
+          branch: ["评审通过：进入需求拆解。", "评审不通过：退回需求提出补充材料。"],
+          outputs: ["需求拆解输入卡"]
         },
         understand: {
-          support: ["解析<strong>高压箱、接触器、绝缘监测</strong>相关的风险描述。", "检索已有 CBB/高压箱算法，自动比对<strong>部件对象、字段依赖、触发条件、屏蔽工况</strong>。", "识别该需求是新增模型、已有模型扩展，还是只需配置迭代。"],
-          decision: ["人工判断是否能<strong>合并入已有部件模型</strong>。", "若只是新增字段或屏蔽条件，则走已有模型迭代；若风险模式或处置链路不同，则新开发。"],
-          branch: ["可合并：进入已有高压箱模型迭代，复用现有上线链路。", "不可合并：作为新部件风险模型进入开发。"],
-          outputs: ["需求复用判断单", "已有模型/规则对比表", "新建/迭代路径建议"]
-        },
-        data: {
-          support: ["自动查询高压箱相关<strong>状态位、电流、温度、绝缘阻值</strong>字段。", "检查采样频率、缺失率、站点覆盖和异常样本数量。"],
-          decision: ["人工确认字段选择是否符合部件业务口径。", "判断缺失字段是否允许用替代信号。"],
-          outputs: ["高压箱数据集", "字段可用性扫描", "缺失片段清单", "样本筛选 SQL"]
+          support: ["拆解风险场景、字段指标和模型复用可能性。", "检索已有模型，判断是新增开发还是已有模型迭代。"],
+          decision: ["人工确认拆解口径和复用判断是否符合业务诉求。"],
+          branch: ["可合并：进入模型设计，迭代已有模型。", "不可合并：进入数据探索，开发新模型。"],
+          outputs: ["数据探索或模型设计输入卡"]
         },
         eda: {
-          support: ["自动生成<strong>字段覆盖度、缺失率、异常样本、工况分布</strong>分析。", "定位接触器反馈异常、绝缘阻值异常、温升异常的典型片段。"],
-          decision: ["人工判断异常是否来自真实部件风险还是状态位口径差异。", "确认是否需要需求方复核数据含义。"],
-          outputs: ["数据可用性报告", "典型异常样本", "字段质量结论", "需求方确认材料"]
+          support: ["自动完成字段覆盖、缺失、异常样本和工况分布探索。"],
+          outputs: ["特征确认输入包"]
         },
-        mapping: {
-          support: ["把 CBB 指标逐一映射到<strong>生产字段、设备层级、采样周期</strong>。", "自动标注<strong>字段缺失、口径冲突、替代字段</strong>。"],
-          decision: ["人工确认状态位和模拟量字段的真实含义。", "避免字段同名但业务含义不同导致误报。"],
-          outputs: ["字段映射表", "字段缺口清单", "替代字段建议", "专家确认问题单"]
-        },
-        confirm: {
-          support: ["自动整理<strong>字段映射、数据质量、异常样本、待决策问题</strong>给 CBB 专家。"],
-          decision: ["CBB 专家确认<strong>触发条件、屏蔽工况、验收口径</strong>。", "这是部件业务责任判断，必须人工确认。"],
-          outputs: ["需求方确认记录", "冻结后的指标口径", "屏蔽条件清单", "评审输入材料"]
+        feature: {
+          support: ["将需求指标和数据探索结果转成可计算特征，并确认字段口径。"],
+          outputs: ["模型设计输入特征表"]
         },
         logic: {
-          support: ["生成<strong>规则候选、阈值建议、持续时间窗口、屏蔽条件</strong>。", "自动补充每条规则的触发解释和需求来源。"],
-          decision: ["人工确认规则是否符合部件工作逻辑。", "评估误报是否会影响运维处置。"],
-          outputs: ["高压箱规则原型", "触发/屏蔽条件清单", "风险解释", "方案对比表"]
+          support: ["生成模型或规则方案，包含触发条件、屏蔽条件、风险等级和参数建议。"],
+          outputs: ["模型评审输入包"]
         },
         review: {
-          support: ["自动准备<strong>需求来源、字段证据、异常样本、规则草案、测试计划</strong>。"],
-          decision: ["人工评审业务可解释性和上线风险。", "确认告警流转、处置动作和责任归属。"],
-          outputs: ["评审 PPT/报告", "需求方确认附件", "评审结论", "上线约束"]
+          decision: ["人工确认业务解释性、上线风险、处置动作和责任边界。"],
+          branch: ["评审通过：进入测试验证。", "评审不通过：回到模型设计。"],
+          outputs: ["测试验证输入方案"]
         },
         code: {
-          support: ["生成<strong>规则代码草稿、单测脚本、配置项、回归样本</strong>。", "覆盖字段缺失、维护模式、上电瞬态等边界条件。"],
-          decision: ["人工确认代码实现与 CBB 确认口径一致。", "确认测试样本覆盖关键工况。"],
-          outputs: ["规则代码草稿", "单测脚本", "配置参数表", "回归样本集"]
+          support: ["自动生成测试用例、回放结果和边界工况检查。"],
+          branch: ["测试通过：进入部署上线。", "测试不通过：回到模型设计修正。"],
+          outputs: ["上线输入包"]
+        },
+        deploy: {
+          support: ["生成发布配置、上线清单和版本记录。"],
+          outputs: ["运营监测配置"]
         },
         ops: {
-          support: ["自动汇总<strong>触发站点、触发工况、人工确认结果、需求方反馈</strong>。", "识别维护工况误报和字段缺失导致的异常触发。"],
-          decision: ["人工决定是否补充屏蔽条件、调整阈值或回到需求方确认。"],
-          outputs: ["运行复盘卡", "误报样本清单", "需求方反馈摘要", "迭代建议"]
+          support: ["自动汇总触发效果、需求方反馈、误报样本和现场处置结果。"],
+          branch: ["需要迭代：进入模型迭代。", "无需迭代：持续运营监测。"],
+          outputs: ["模型迭代输入"]
         },
         iteration: {
-          support: ["汇总上线触发、需求方反馈和字段质量问题，生成<strong>部件模型迭代方案</strong>。", "更新已有模型的<strong>字段映射、规则参数、屏蔽工况、回归样本</strong>。"],
-          decision: ["人工确认迭代是否满足 CBB 验收口径，是否需要重新与需求方确认。"],
-          branch: ["完成迭代：更新模型库、字段映射和版本说明。", "出现新部件风险：回到<strong>需求进入</strong>形成下一轮需求。"],
-          outputs: ["模型版本更新记录", "字段/规则变更说明", "需求方复盘结论", "新一轮需求 Backlog"]
+          support: ["根据运营反馈生成字段补充、阈值调整、屏蔽条件和版本优化建议。"],
+          decision: ["人工确认是否满足需求验收口径，以及是否进入下一轮模型设计。"],
+          outputs: ["下一轮模型设计输入"]
         }
       }
     };
 
     const scenarios = {
       battery: {
-        title: "电池机理驱动：电芯一致性 / 内短风险预警",
+        title: "机理驱动（主导）：电芯一致性 / 内短风险预警",
         desc: "从潜在内短与异常衰退机理出发，围绕电压一致性、温升、压差扩散等信号完成验证与规则设计。",
         color: "#42f2a1",
         soft: "rgba(66, 242, 161, 0.13)",
@@ -1370,7 +1354,7 @@
         ]
       },
       cbb: {
-        title: "CBB 部件需求驱动：高压箱接触器 / 绝缘异常预警",
+        title: "需求驱动（补充）：高压箱接触器 / 绝缘异常预警",
         desc: "从高压箱需求文档出发，先解析指标和字段，再与部件专家确认口径，最后转成可测试规则。",
         color: "#62b8ff",
         soft: "rgba(98, 184, 255, 0.13)",
@@ -1577,9 +1561,9 @@
 
     function positionNodePopovers() {
       const chartWidth = flowChart.clientWidth || 1500;
-      const chartHeight = flowChart.clientHeight || 760;
+      const chartHeight = flowChart.clientHeight || 620;
       const scaleX = chartWidth / 1500;
-      const scaleY = chartHeight / 760;
+      const scaleY = chartHeight / 620;
       const gap = 14;
       const pad = 12;
 
@@ -1639,10 +1623,10 @@
         }).join("")}</div>`
         : "";
       const agentSection = step.roles.includes("agent") && detail.agent?.length
-        ? `<div class="detail-section agent"><small>Agent 执行内容</small><ul>${detail.agent.map((item) => `<li>${item}</li>`).join("")}</ul></div>`
+        ? `<div class="detail-section agent"><small>Agent 执行</small><ul>${detail.agent.map((item) => `<li>${item}</li>`).join("")}</ul></div>`
         : "";
       const humanSection = step.roles.includes("human") && detail.human?.length
-        ? `<div class="detail-section human"><small>人工判断内容</small><ul>${detail.human.map((item) => `<li>${item}</li>`).join("")}</ul></div>`
+        ? `<div class="detail-section human"><small>人工判断</small><ul>${detail.human.map((item) => `<li>${item}</li>`).join("")}</ul></div>`
         : "";
       const branchSection = detail.branch?.length
         ? `<div class="detail-section branch"><small>判断分支</small><ul>${detail.branch.map((item) => `<li>${item}</li>`).join("")}</ul></div>`
@@ -1656,7 +1640,7 @@
           ${humanSection}
           ${branchSection}
           <div class="detail-section output">
-            <small>明确交付物</small>
+            <small>交付物</small>
             <ul>${outputItems}</ul>
           </div>
         </div>
