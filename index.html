@@ -595,6 +595,25 @@
       color: #dff8ff;
     }
 
+    .flow-detail-header {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .flow-detail-header h4 {
+      margin: 0;
+    }
+
+    .popover-role-tags {
+      display: inline-flex;
+      flex: 0 0 auto;
+      justify-content: flex-start;
+      gap: 6px;
+    }
+
     .detail-section + .detail-section {
       margin-top: 12px;
       padding-top: 12px;
@@ -1160,11 +1179,11 @@
       { id: "intake", x: 40, y: 80, w: 200, h: 76 },
       { id: "req_review", x: 285, y: 45, w: 220, h: 146, shape: "diamond" },
       { id: "understand", x: 560, y: 45, w: 240, h: 146, shape: "diamond" },
-      { id: "eda", x: 900, y: 80, w: 200, h: 76 },
+      { id: "eda", x: 980, y: 80, w: 200, h: 76 },
       { id: "logic", x: 1260, y: 205, w: 220, h: 80 },
       { id: "review", x: 995, y: 255, w: 230, h: 150, shape: "diamond" },
       { id: "code", x: 655, y: 255, w: 230, h: 150, shape: "diamond" },
-      { id: "deploy", x: 335, y: 292, w: 200, h: 76 },
+      { id: "deploy", x: 375, y: 292, w: 200, h: 76 },
       { id: "ops", x: 90, y: 255, w: 230, h: 150, shape: "diamond" },
       { id: "iteration", x: 600, y: 550, w: 220, h: 80, kind: "loop" }
     ];
@@ -1173,13 +1192,13 @@
       { paths: ["cbb"], d: "M240 118 L285 118" },
       { paths: ["cbb"], d: "M505 118 L560 118", label: { x: 532, y: 92, w: 92, text: "评审通过" } },
       { paths: ["cbb"], d: "M395 191 L395 225 L140 225 L140 156", label: { x: 290, y: 210, w: 105, text: "评审不通过" } },
-      { paths: ["cbb"], d: "M800 118 L900 118", label: { x: 832, y: 142, w: 118, h: 40, lines: ["不可合并：", "新模型开发"] } },
+      { paths: ["cbb"], d: "M800 118 L980 118", label: { x: 890, y: 142, w: 170, text: "不可合并：新模型开发" } },
       { paths: ["cbb"], d: "M680 191 L680 235 L565 235 L565 590 L600 590", label: { x: 610, y: 220, w: 190, text: "可合并：迭代已有模型" } },
-      { paths: ["battery", "cbb"], d: "M1100 118 L1370 118 L1370 205" },
+      { paths: ["battery", "cbb"], d: "M1180 118 L1370 118 L1370 205" },
       { paths: ["battery", "cbb"], d: "M1260 245 L1235 245 L1235 330 L1225 330" },
       { paths: ["battery", "cbb"], d: "M995 330 L885 330", label: { x: 940, y: 305, w: 92, text: "评审通过" } },
-      { paths: ["battery", "cbb"], d: "M655 330 L535 330", label: { x: 595, y: 305, w: 92, text: "测试通过" } },
-      { paths: ["battery", "cbb"], d: "M335 330 L320 330" },
+      { paths: ["battery", "cbb"], d: "M655 330 L575 330", label: { x: 615, y: 305, w: 80, text: "测试通过" } },
+      { paths: ["battery", "cbb"], d: "M375 330 L320 330" },
       { paths: ["battery", "cbb"], d: "M1110 405 L1110 450 L1325 450 L1325 285", label: { x: 1188, y: 438, w: 110, text: "评审不通过" } },
       { paths: ["battery", "cbb"], d: "M770 405 L770 505 L1370 505 L1370 285", label: { x: 1115, y: 520, w: 110, text: "测试不通过" } },
       { paths: ["battery", "cbb"], d: "M320 330 L320 590 L600 590", label: { x: 470, y: 575, w: 110, text: "需要迭代" } },
@@ -1229,7 +1248,7 @@
           outputs: ["初版BRD需求文档（Markdown）"]
         },
         req_review: {
-          decision: ["人工判断需求价值、数据可行性、业务边界和优先级。"],
+          decision: ["判断需求价值、数据可行性、业务边界和优先级。"],
           branch: ["评审通过。", "评审不通过。"],
           outputs: ["冻结版BRD需求文档（Markdown）"]
         },
@@ -1615,12 +1634,16 @@
         ? `<div class="detail-section agent"><small>Agent 执行</small><ul>${detail.agent.map((item) => `<li>${item}</li>`).join("")}</ul></div>`
         : "";
       const humanSection = step.roles.includes("human") && detail.human?.length
-        ? `<div class="detail-section human"><small>人工判断</small><ul>${detail.human.map((item) => `<li>${item}</li>`).join("")}</ul></div>`
+        ? `<div class="detail-section human"><small>人工介入</small><ul>${detail.human.map((item) => `<li>${item}</li>`).join("")}</ul></div>`
         : "";
       const outputItems = detail.outputs.map((item) => `<li>${item}</li>`).join("");
+      const roleTags = `<div class="popover-role-tags">${step.roles.map((role) => `<span class="svg-node-tag ${role === "human" ? "human" : "agent"}">${role === "human" ? "人工" : "Agent"}</span>`).join("")}</div>`;
       return `
         <div class="flow-detail ${step.roles.join(" ")}">
-          <h4>${step.title}｜${flowDetailTitle(step)}</h4>
+          <div class="flow-detail-header">
+            ${roleTags}
+            <h4>${step.title}</h4>
+          </div>
           ${skillSection}
           ${agentSection}
           ${humanSection}
@@ -1640,11 +1663,6 @@
         branch: detail.branch || step.branch || [],
         outputs: detail.outputs || ["待生成交付物"]
       };
-    }
-
-    function flowDetailTitle(step) {
-      if (step.roles.length > 1) return step.kind === "loop" ? "迭代回环节点" : "判断分支节点";
-      return step.roles[0] === "agent" ? "Agent 自动化节点" : "人工决策节点";
     }
 
     sourceButtons.forEach((button) => {
