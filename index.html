@@ -1130,7 +1130,6 @@
       { id: "req_review", title: "需求评审", summary: "价值边界确认", roles: ["human"], paths: ["cbb"], kind: "decision", branch: ["评审通过", "评审不通过"] },
       { id: "understand", title: "需求拆解", summary: "场景与复用判断", roles: ["agent", "human"], paths: ["cbb"], skills: ["requirement"], kind: "decision", branch: ["可合并：迭代已有模型", "不可合并：新模型开发"] },
       { id: "eda", title: "数据探索", summary: "样本与信号验证", roles: ["agent"], paths: ["battery", "cbb"], skills: ["data"] },
-      { id: "feature", title: "特征确认", summary: "候选特征定稿", roles: ["agent"], paths: ["battery", "cbb"], skills: ["data", "model"] },
       { id: "logic", title: "模型设计", summary: "规则与模型方案", roles: ["agent"], paths: ["battery", "cbb"], skills: ["model"] },
       { id: "review", title: "模型评审", summary: "解释与风险决策", roles: ["human"], paths: ["battery", "cbb"], kind: "decision", branch: ["评审通过", "评审不通过"] },
       { id: "code", title: "测试验证", summary: "回放与边界测试", roles: ["agent"], paths: ["battery", "cbb"], skills: ["test"], kind: "decision", branch: ["测试通过", "测试不通过"] },
@@ -1162,7 +1161,6 @@
       { id: "req_review", x: 285, y: 45, w: 220, h: 146, shape: "diamond" },
       { id: "understand", x: 560, y: 45, w: 240, h: 146, shape: "diamond" },
       { id: "eda", x: 900, y: 80, w: 200, h: 76 },
-      { id: "feature", x: 1160, y: 80, w: 210, h: 76 },
       { id: "logic", x: 1260, y: 290, w: 220, h: 80 },
       { id: "review", x: 995, y: 255, w: 230, h: 150, shape: "diamond" },
       { id: "code", x: 655, y: 255, w: 230, h: 150, shape: "diamond" },
@@ -1176,9 +1174,8 @@
       { paths: ["cbb"], d: "M505 118 L560 118", label: { x: 532, y: 92, w: 92, text: "评审通过" } },
       { paths: ["cbb"], d: "M395 191 L395 225 L140 225 L140 156", label: { x: 265, y: 210, w: 150, text: "评审不通过：补充需求" } },
       { paths: ["cbb"], d: "M800 118 L900 118", label: { x: 832, y: 142, w: 118, h: 40, lines: ["不可合并：", "新模型开发"] } },
-      { paths: ["cbb"], d: "M680 45 L680 24 L1420 24 L1420 255 L1370 255 L1370 290", label: { x: 1135, y: 52, w: 190, text: "可合并：迭代已有模型" } },
-      { paths: ["battery", "cbb"], d: "M1100 118 L1160 118" },
-      { paths: ["battery", "cbb"], d: "M1265 156 L1265 220 L1370 220 L1370 290" },
+      { paths: ["cbb"], d: "M680 191 L680 235 L565 235 L565 590 L600 590", label: { x: 610, y: 220, w: 190, text: "可合并：迭代已有模型" } },
+      { paths: ["battery", "cbb"], d: "M1100 118 L1370 118 L1370 290" },
       { paths: ["battery", "cbb"], d: "M1260 330 L1225 330" },
       { paths: ["battery", "cbb"], d: "M995 330 L885 330", label: { x: 940, y: 305, w: 92, text: "评审通过" } },
       { paths: ["battery", "cbb"], d: "M655 330 L535 330", label: { x: 595, y: 305, w: 92, text: "测试通过" } },
@@ -1193,94 +1190,86 @@
     const sourceFlowDetails = {
       battery: {
         eda: {
-          support: ["围绕机理假设自动拉取相关样本，完成<strong>趋势、分布、异常片段</strong>探索。", "识别可用于建模的信号组合和数据质量问题。"],
-          outputs: ["候选特征输入包"]
-        },
-        feature: {
-          support: ["根据数据探索结果生成候选特征，并筛选与风险机理一致的关键特征。"],
-          outputs: ["模型设计输入特征表"]
+          support: ["依据机理分析假设，利用伽利略 Codex 自动提取云端数据中相关测点，进行<strong>特征、趋势、分布</strong>等探索性分析及验证。"],
+          outputs: ["数据探索报告（html）", "数据探索计算脚本（py）"]
         },
         logic: {
-          support: ["基于已确认特征生成模型或规则方案，输出阈值、窗口、屏蔽条件和风险等级草案。"],
-          outputs: ["模型评审输入包"]
+          support: ["基于数据探索结果构建模型设计方案，包含主逻辑、阈值、窗口、屏蔽条件和风险等级等技术细节。"],
+          outputs: ["初版模型设计文档（Markdown）"]
         },
         review: {
-          decision: ["人工确认模型解释性、风险等级、误报漏报权衡和上线边界。"],
+          decision: ["人工评审模型设计方案的机理合理性、可解释性、误报漏报权衡和上线边界。"],
           branch: ["评审通过：进入测试验证。", "评审不通过：回到模型设计。"],
-          outputs: ["测试验证输入方案"]
+          outputs: ["冻结版模型设计文档（Markdown）"]
         },
         code: {
-          support: ["自动生成测试配置、回放脚本和边界样本验证结果。"],
+          support: ["基于冻结版模型设计文档生成测试配置、回放脚本和边界样本验证结果。"],
           branch: ["测试通过：进入部署上线。", "测试不通过：回到模型设计修正。"],
-          outputs: ["上线输入包"]
+          outputs: ["模型测试报告（html）", "测试回放脚本（py）"]
         },
         deploy: {
-          support: ["生成发布配置、上线清单和版本记录。"],
-          outputs: ["运营监测配置"]
+          support: ["基于测试通过结果生成发布配置、上线清单和版本记录。"],
+          outputs: ["模型上线配置", "上线版本记录"]
         },
         ops: {
-          support: ["自动监测触发效果、人工确认率、误报样本和漏报线索。"],
+          support: ["自动监测模型触发效果、人工确认率、误报样本和漏报线索，形成运行复盘。"],
           branch: ["需要迭代：进入模型迭代。", "无需迭代：持续运营监测。"],
-          outputs: ["模型迭代输入"]
+          outputs: ["模型运行监测报告（html）"]
         },
         iteration: {
-          support: ["汇总线上反馈，生成模型优化方案和版本变更建议。"],
-          decision: ["人工确认是否进入新一轮模型设计或补充数据探索。"],
-          outputs: ["下一轮模型设计输入"]
+          support: ["汇总线上反馈和运行监测结果，生成模型优化方案和版本变更建议。"],
+          decision: ["人工确认迭代范围、优先级和是否进入下一轮模型设计。"],
+          outputs: ["模型迭代方案（Markdown）"]
         }
       },
       cbb: {
         intake: {
-          support: ["将需求文档转成结构化任务，抽取部件对象、风险模式、指标口径和验收目标。"],
-          decision: ["人工补充需求背景、确认需求方和算法侧接口。"],
-          outputs: ["需求评审输入卡"]
+          support: ["将自然语言描述的模型需求转化为结构化的需求文档（Markdown）。"],
+          decision: ["挖掘业务痛点，梳理相应的模型需求。"],
+          outputs: ["初版BRD需求文档（Markdown）"]
         },
         req_review: {
           decision: ["人工判断需求价值、数据可行性、业务边界和优先级。"],
-          branch: ["评审通过：进入需求拆解。", "评审不通过：退回需求提出补充材料。"],
-          outputs: ["需求拆解输入卡"]
+          branch: ["评审通过。", "评审不通过：重新梳理需求。"],
+          outputs: ["冻结版BRD需求文档（Markdown）"]
         },
         understand: {
-          support: ["拆解风险场景、字段指标和模型复用可能性。", "检索已有模型，判断是新增开发还是已有模型迭代。"],
-          decision: ["人工确认拆解口径和复用判断是否符合业务诉求。"],
-          branch: ["可合并：进入模型设计，迭代已有模型。", "不可合并：进入数据探索，开发新模型。"],
-          outputs: ["数据探索或模型设计输入卡"]
+          support: ["拆解风险场景、测点参数，检索已有模型，判断模型复用可能性。"],
+          decision: ["确认需求拆解和复用判断是否符合业务诉求。"],
+          branch: ["可合并：进入模型迭代，迭代已有模型。", "不可合并：进入数据探索，开发新模型。"],
+          outputs: ["PRD需求文档（Markdown）", "模型开发排期"]
         },
         eda: {
-          support: ["自动完成字段覆盖、缺失、异常样本和工况分布探索。"],
-          outputs: ["特征确认输入包"]
-        },
-        feature: {
-          support: ["将需求指标和数据探索结果转成可计算特征，并确认字段口径。"],
-          outputs: ["模型设计输入特征表"]
+          support: ["基于PRD需求文档，利用伽利略 Codex 自动提取云端数据中相关测点，进行需求中特征、趋势、分布等探索性分析及验证。"],
+          outputs: ["数据探索报告（html）", "数据探索计算脚本（py）"]
         },
         logic: {
-          support: ["生成模型或规则方案，包含触发条件、屏蔽条件、风险等级和参数建议。"],
-          outputs: ["模型评审输入包"]
+          support: ["基于数据探索结果构建模型设计方案，包含主逻辑、阈值、窗口、屏蔽条件和风险等级等技术细节。"],
+          outputs: ["初版模型设计文档（Markdown）"]
         },
         review: {
-          decision: ["人工确认业务解释性、上线风险、处置动作和责任边界。"],
+          decision: ["人工评审模型设计方案的业务解释性、上线风险、处置动作和责任边界。"],
           branch: ["评审通过：进入测试验证。", "评审不通过：回到模型设计。"],
-          outputs: ["测试验证输入方案"]
+          outputs: ["冻结版模型设计文档（Markdown）"]
         },
         code: {
-          support: ["自动生成测试用例、回放结果和边界工况检查。"],
+          support: ["基于冻结版模型设计文档生成测试用例、回放结果和边界工况检查。"],
           branch: ["测试通过：进入部署上线。", "测试不通过：回到模型设计修正。"],
-          outputs: ["上线输入包"]
+          outputs: ["模型测试报告（html）", "测试回放脚本（py）"]
         },
         deploy: {
-          support: ["生成发布配置、上线清单和版本记录。"],
-          outputs: ["运营监测配置"]
+          support: ["基于测试通过结果生成发布配置、上线清单和版本记录。"],
+          outputs: ["模型上线配置", "上线版本记录"]
         },
         ops: {
-          support: ["自动汇总触发效果、需求方反馈、误报样本和现场处置结果。"],
+          support: ["自动汇总模型触发效果、需求方反馈、误报样本和现场处置结果，形成运行复盘。"],
           branch: ["需要迭代：进入模型迭代。", "无需迭代：持续运营监测。"],
-          outputs: ["模型迭代输入"]
+          outputs: ["模型运行监测报告（html）"]
         },
         iteration: {
           support: ["根据运营反馈生成字段补充、阈值调整、屏蔽条件和版本优化建议。"],
-          decision: ["人工确认是否满足需求验收口径，以及是否进入下一轮模型设计。"],
-          outputs: ["下一轮模型设计输入"]
+          decision: ["人工确认迭代范围、验收口径和是否进入下一轮模型设计。"],
+          outputs: ["模型迭代方案（Markdown）"]
         }
       }
     };
@@ -1316,21 +1305,6 @@
             mock: "chart",
             meta: "sample=128 clusters",
             data: ["压差扩散指数", "温升偏离", "一致性评分", "异常持续时长", "SOC 校正后偏移", "历史告警关联"]
-          },
-          {
-            id: "feature",
-            title: "特征候选表",
-            brief: "特征优先级与解释",
-            type: "特征工程",
-            lead: "Agent 依据 EDA 和机理链生成候选特征并排序。",
-            mock: "table",
-            meta: "ranked features",
-            data: [
-              ["特征", "解释", "优先级"],
-              ["delta_v_spread_24h", "压差持续扩散", "高"],
-              ["temp_bias_cell", "目标电芯温升偏离", "中"],
-              ["soc_norm_voltage_drop", "SOC 校正后电压下沉", "高"]
-            ]
           },
           {
             id: "logic",
