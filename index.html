@@ -1161,7 +1161,7 @@
       { id: "req_review", x: 285, y: 45, w: 220, h: 146, shape: "diamond" },
       { id: "understand", x: 560, y: 45, w: 240, h: 146, shape: "diamond" },
       { id: "eda", x: 900, y: 80, w: 200, h: 76 },
-      { id: "logic", x: 1260, y: 290, w: 220, h: 80 },
+      { id: "logic", x: 1260, y: 205, w: 220, h: 80 },
       { id: "review", x: 995, y: 255, w: 230, h: 150, shape: "diamond" },
       { id: "code", x: 655, y: 255, w: 230, h: 150, shape: "diamond" },
       { id: "deploy", x: 335, y: 292, w: 200, h: 76 },
@@ -1172,19 +1172,19 @@
     const flowEdges = [
       { paths: ["cbb"], d: "M240 118 L285 118" },
       { paths: ["cbb"], d: "M505 118 L560 118", label: { x: 532, y: 92, w: 92, text: "评审通过" } },
-      { paths: ["cbb"], d: "M395 191 L395 225 L140 225 L140 156", label: { x: 265, y: 210, w: 150, text: "评审不通过：补充需求" } },
+      { paths: ["cbb"], d: "M395 191 L395 225 L140 225 L140 156", label: { x: 290, y: 210, w: 105, text: "评审不通过" } },
       { paths: ["cbb"], d: "M800 118 L900 118", label: { x: 832, y: 142, w: 118, h: 40, lines: ["不可合并：", "新模型开发"] } },
       { paths: ["cbb"], d: "M680 191 L680 235 L565 235 L565 590 L600 590", label: { x: 610, y: 220, w: 190, text: "可合并：迭代已有模型" } },
-      { paths: ["battery", "cbb"], d: "M1100 118 L1370 118 L1370 290" },
-      { paths: ["battery", "cbb"], d: "M1260 330 L1225 330" },
+      { paths: ["battery", "cbb"], d: "M1100 118 L1370 118 L1370 205" },
+      { paths: ["battery", "cbb"], d: "M1260 245 L1235 245 L1235 330 L1225 330" },
       { paths: ["battery", "cbb"], d: "M995 330 L885 330", label: { x: 940, y: 305, w: 92, text: "评审通过" } },
       { paths: ["battery", "cbb"], d: "M655 330 L535 330", label: { x: 595, y: 305, w: 92, text: "测试通过" } },
       { paths: ["battery", "cbb"], d: "M335 330 L320 330" },
-      { paths: ["battery", "cbb"], d: "M1110 405 L1110 450 L1250 450 L1250 350 L1260 350", label: { x: 1180, y: 438, w: 180, text: "评审不通过：回到设计" } },
-      { paths: ["battery", "cbb"], d: "M770 405 L770 495 L1460 495 L1460 340 L1480 340", label: { x: 1110, y: 520, w: 180, text: "测试不通过：回到设计" } },
+      { paths: ["battery", "cbb"], d: "M1110 405 L1110 450 L1325 450 L1325 285", label: { x: 1188, y: 438, w: 110, text: "评审不通过" } },
+      { paths: ["battery", "cbb"], d: "M770 405 L770 505 L1370 505 L1370 285", label: { x: 1115, y: 520, w: 110, text: "测试不通过" } },
       { paths: ["battery", "cbb"], d: "M320 330 L320 590 L600 590", label: { x: 470, y: 575, w: 110, text: "需要迭代" } },
       { paths: ["battery", "cbb"], d: "M90 330 L45 330 L45 455 L205 455 L205 405", label: { x: 120, y: 475, w: 170, text: "无需迭代：持续监测" } },
-      { paths: ["battery", "cbb"], d: "M820 590 L930 590 L930 670 L1370 670 L1370 370", label: { x: 1140, y: 655, w: 120, text: "下一轮优化" } }
+      { paths: ["battery", "cbb"], d: "M820 590 L930 590 L930 670 L1415 670 L1415 285", label: { x: 1140, y: 655, w: 120, text: "下一轮优化" } }
     ];
 
     const sourceFlowDetails = {
@@ -1199,12 +1199,12 @@
         },
         review: {
           decision: ["人工评审模型设计方案的机理合理性、可解释性、误报漏报权衡和上线边界。"],
-          branch: ["评审通过：进入测试验证。", "评审不通过：回到模型设计。"],
+          branch: ["评审通过。", "评审不通过。"],
           outputs: ["冻结版模型设计文档（Markdown）"]
         },
         code: {
           support: ["基于冻结版模型设计文档生成测试配置、回放脚本和边界样本验证结果。"],
-          branch: ["测试通过：进入部署上线。", "测试不通过：回到模型设计修正。"],
+          branch: ["测试通过。", "测试不通过。"],
           outputs: ["模型测试报告（html）", "测试回放脚本（py）"]
         },
         deploy: {
@@ -1213,7 +1213,7 @@
         },
         ops: {
           support: ["自动监测模型触发效果、人工确认率、误报样本和漏报线索，形成运行复盘。"],
-          branch: ["需要迭代：进入模型迭代。", "无需迭代：持续运营监测。"],
+          branch: ["需要迭代。", "无需迭代：持续运营监测。"],
           outputs: ["模型运行监测报告（html）"]
         },
         iteration: {
@@ -1230,7 +1230,7 @@
         },
         req_review: {
           decision: ["人工判断需求价值、数据可行性、业务边界和优先级。"],
-          branch: ["评审通过。", "评审不通过：重新梳理需求。"],
+          branch: ["评审通过。", "评审不通过。"],
           outputs: ["冻结版BRD需求文档（Markdown）"]
         },
         understand: {
@@ -1249,12 +1249,12 @@
         },
         review: {
           decision: ["人工评审模型设计方案的业务解释性、上线风险、处置动作和责任边界。"],
-          branch: ["评审通过：进入测试验证。", "评审不通过：回到模型设计。"],
+          branch: ["评审通过。", "评审不通过。"],
           outputs: ["冻结版模型设计文档（Markdown）"]
         },
         code: {
           support: ["基于冻结版模型设计文档生成测试用例、回放结果和边界工况检查。"],
-          branch: ["测试通过：进入部署上线。", "测试不通过：回到模型设计修正。"],
+          branch: ["测试通过。", "测试不通过。"],
           outputs: ["模型测试报告（html）", "测试回放脚本（py）"]
         },
         deploy: {
@@ -1263,7 +1263,7 @@
         },
         ops: {
           support: ["自动汇总模型触发效果、需求方反馈、误报样本和现场处置结果，形成运行复盘。"],
-          branch: ["需要迭代：进入模型迭代。", "无需迭代：持续运营监测。"],
+          branch: ["需要迭代。", "无需迭代：持续运营监测。"],
           outputs: ["模型运行监测报告（html）"]
         },
         iteration: {
@@ -1617,9 +1617,6 @@
       const humanSection = step.roles.includes("human") && detail.human?.length
         ? `<div class="detail-section human"><small>人工判断</small><ul>${detail.human.map((item) => `<li>${item}</li>`).join("")}</ul></div>`
         : "";
-      const branchSection = detail.branch?.length
-        ? `<div class="detail-section branch"><small>判断分支</small><ul>${detail.branch.map((item) => `<li>${item}</li>`).join("")}</ul></div>`
-        : "";
       const outputItems = detail.outputs.map((item) => `<li>${item}</li>`).join("");
       return `
         <div class="flow-detail ${step.roles.join(" ")}">
@@ -1627,7 +1624,6 @@
           ${skillSection}
           ${agentSection}
           ${humanSection}
-          ${branchSection}
           <div class="detail-section output">
             <small>交付物</small>
             <ul>${outputItems}</ul>
