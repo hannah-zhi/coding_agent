@@ -223,8 +223,7 @@
       z-index: 30;
     }
 
-    #demo,
-    #roadmap {
+    #demo {
       z-index: 1;
     }
 
@@ -420,6 +419,7 @@
 
     .svg-node.muted {
       opacity: 0.32;
+      cursor: default;
     }
 
     .svg-node .shape {
@@ -696,6 +696,102 @@
       overflow: hidden;
     }
 
+    .output-matrix {
+      overflow: hidden;
+    }
+
+    .matrix-wrap {
+      overflow-x: auto;
+    }
+
+    .matrix-table {
+      width: 100%;
+      min-width: 980px;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .matrix-table th,
+    .matrix-table td {
+      padding: 14px 14px;
+      border-bottom: 1px solid rgba(122, 211, 255, 0.12);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .matrix-table th {
+      color: #bdefff;
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      font-weight: 850;
+      background: rgba(8, 24, 35, 0.82);
+    }
+
+    .matrix-table td {
+      color: #cfe4ef;
+      line-height: 1.55;
+    }
+
+    .matrix-table tr:hover td {
+      background: rgba(34, 216, 255, 0.035);
+    }
+
+    .matrix-node {
+      display: grid;
+      gap: 4px;
+    }
+
+    .matrix-node strong {
+      color: #f0fbff;
+      font-size: 14px;
+    }
+
+    .matrix-node span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .matrix-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .matrix-tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(122, 211, 255, 0.18);
+      background: rgba(255, 255, 255, 0.035);
+      color: #d8edf8;
+      font-size: 12px;
+      font-weight: 760;
+      white-space: nowrap;
+    }
+
+    .matrix-tag.skill {
+      border-color: rgba(34, 216, 255, 0.38);
+      background: rgba(34, 216, 255, 0.08);
+      color: #9ff2ff;
+    }
+
+    .matrix-tag.platform {
+      border-color: rgba(255, 189, 89, 0.36);
+      background: rgba(255, 189, 89, 0.08);
+      color: #ffe0a8;
+    }
+
+    .matrix-list {
+      margin: 0;
+      padding-left: 17px;
+    }
+
+    .matrix-list li + li {
+      margin-top: 4px;
+    }
+
     .demo-top {
       display: flex;
       justify-content: space-between;
@@ -937,39 +1033,6 @@
       box-shadow: 0 0 16px var(--scenario-soft, rgba(34, 216, 255, 0.24));
     }
 
-    .roadmap {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 14px;
-    }
-
-    .road-card {
-      padding: 18px;
-      border: 1px solid rgba(122, 211, 255, 0.16);
-      border-radius: 16px;
-      background: rgba(255, 255, 255, 0.035);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .road-card::before {
-      content: "";
-      position: absolute;
-      inset: 0 auto 0 0;
-      width: 3px;
-      background: linear-gradient(var(--agent), var(--battery));
-    }
-
-    .road-card h3 {
-      margin: 0 0 8px;
-    }
-
-    .road-card p {
-      margin: 0;
-      color: var(--muted);
-      line-height: 1.62;
-    }
-
     @media (max-width: 1080px) {
       .demo-body {
         grid-template-columns: 1fr;
@@ -984,7 +1047,6 @@
 
       .topbar,
       .section-head,
-      .demo-top,
       .artifact-head {
         align-items: flex-start;
         flex-direction: column;
@@ -1003,9 +1065,7 @@
       }
 
       .source-switch,
-      .demo-steps,
-      .kv-grid,
-      .roadmap {
+      .kv-grid {
         grid-template-columns: 1fr;
       }
     }
@@ -1024,8 +1084,7 @@
       </a>
       <nav class="nav" aria-label="页面导航">
         <a href="#framework">完整流程</a>
-        <a href="#demo">交付物 Demo</a>
-        <a href="#roadmap">落地路线</a>
+        <a href="#demo">标准化输出</a>
       </nav>
     </header>
 
@@ -1035,7 +1094,7 @@
         <p>从需求理解到数据分析、特征建模、代码测试与运行迭代，让 Agent 接管重复分析与交付生成；机理判断、需求确认、算法评审和上线决策仍由人把关。</p>
         <div class="hero-actions">
           <a class="btn primary" href="#framework">查看完整流程</a>
-          <a class="btn" href="#demo">进入演示 Demo</a>
+          <a class="btn" href="#demo">查看标准化输出</a>
         </div>
       </div>
     </section>
@@ -1076,69 +1135,26 @@
     <section class="section" id="demo">
       <div class="section-head">
         <div>
-          <h2>演示 Demo：点击节点，直接查看交付物示意</h2>
-          <p>不再只列交付物名称，而是模拟展示每个阶段 Agent 会生成的结构化需求、EDA 摘要、特征表、规则草案、评审材料、代码片段和监控摘要。</p>
+          <h2>标准化输出：Skill、平台与交付物矩阵</h2>
+          <p>把每个流程节点需要沉淀的 Skill、执行平台和关键交付物结构化，便于规划离线 Codex 与伽利略云端能力的分工。</p>
         </div>
       </div>
 
-      <div class="glass demo">
-        <div class="demo-top">
-          <div class="scenario-tabs" role="tablist" aria-label="Demo 场景">
-            <button class="scenario-tab active" data-scenario="battery" role="tab" aria-selected="true">电芯一致性 / 内短风险</button>
-            <button class="scenario-tab" data-scenario="cbb" role="tab" aria-selected="false">高压箱接触器 / 绝缘异常</button>
-          </div>
-          <span class="pill agent">点击任意节点切换交付物</span>
+      <div class="glass output-matrix">
+        <div class="matrix-wrap">
+          <table class="matrix-table" aria-label="流程节点标准化输出矩阵">
+            <thead>
+              <tr>
+                <th>流程节点</th>
+                <th>适用路径</th>
+                <th>Skill</th>
+                <th>平台</th>
+                <th>关键交付物</th>
+              </tr>
+            </thead>
+            <tbody id="matrixBody"></tbody>
+          </table>
         </div>
-
-        <div class="demo-body">
-          <div>
-            <div class="demo-summary">
-              <h3 id="scenarioTitle"></h3>
-              <p id="scenarioDesc"></p>
-            </div>
-            <div class="demo-steps" id="demoSteps" aria-label="Demo 节点"></div>
-          </div>
-
-          <aside class="artifact-stage" id="artifactStage" aria-live="polite">
-            <div class="artifact-head">
-              <div>
-                <h3 id="artifactTitle"></h3>
-                <p id="artifactLead"></p>
-              </div>
-              <span class="pill agent" id="artifactType"></span>
-            </div>
-            <div class="mock">
-              <div class="mock-toolbar">
-                <span id="mockName"></span>
-                <span id="mockMeta"></span>
-              </div>
-              <div class="mock-body" id="mockBody"></div>
-            </div>
-          </aside>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="roadmap">
-      <div class="section-head">
-        <div>
-          <h2>落地路线：从试点到标准化 Agent 工作流</h2>
-          <p>先做高价值、低风险场景，再沉淀模板、数据接口和评审标准，最后扩展到更多部件算法需求。</p>
-        </div>
-      </div>
-      <div class="roadmap">
-        <article class="road-card">
-          <h3>0-1 月 Pilot</h3>
-          <p>选择一个电池安全预警场景，跑通需求解析、提数、EDA、报告和代码草稿。</p>
-        </article>
-        <article class="road-card">
-          <h3>1-3 月 Pipeline</h3>
-          <p>固化字段映射、EDA 模板、评审材料模板、测试用例生成和代码规范。</p>
-        </article>
-        <article class="road-card">
-          <h3>3-6 月 Scale</h3>
-          <p>扩展到高压箱、环控、结构等 CBB 需求，形成可复用的跨场景流程。</p>
-        </article>
       </div>
     </section>
   </main>
@@ -1193,7 +1209,7 @@
       { paths: ["cbb"], d: "M505 118 L560 118", label: { x: 532, y: 92, w: 92, text: "评审通过" } },
       { paths: ["cbb"], d: "M395 191 L395 225 L140 225 L140 156", label: { x: 290, y: 210, w: 105, text: "评审不通过" } },
       { paths: ["cbb"], d: "M800 118 L980 118", label: { x: 890, y: 142, w: 170, text: "不可合并：新模型开发" } },
-      { paths: ["cbb"], d: "M680 191 L680 225 L590 225 L590 515 L710 550", label: { x: 610, y: 210, w: 190, text: "可合并：已有模型迭代" } },
+      { paths: ["cbb"], d: "M680 191 L680 225 L590 225 L590 515 L710 515 L710 550", label: { x: 610, y: 210, w: 190, text: "可合并：已有模型迭代" } },
       { paths: ["battery", "cbb"], d: "M1180 118 L1370 118 L1370 205" },
       { paths: ["battery", "cbb"], d: "M1260 245 L1235 245 L1235 330 L1225 330" },
       { paths: ["battery", "cbb"], d: "M995 330 L885 330", label: { x: 940, y: 305, w: 92, text: "评审通过" } },
@@ -1292,6 +1308,79 @@
         }
       }
     };
+
+    const matrixRows = [
+      {
+        id: "intake",
+        path: "需求驱动（补充）",
+        skills: ["需求解析 Skill"],
+        platforms: ["离线"],
+        outputs: ["初版BRD需求文档（Markdown）"]
+      },
+      {
+        id: "req_review",
+        path: "需求驱动（补充）",
+        skills: ["无"],
+        platforms: ["离线"],
+        outputs: ["冻结版BRD需求文档（Markdown）"]
+      },
+      {
+        id: "understand",
+        path: "需求驱动（补充）",
+        skills: ["需求解析 Skill"],
+        platforms: ["离线"],
+        outputs: ["PRD需求文档（Markdown）", "模型开发排期"]
+      },
+      {
+        id: "eda",
+        path: "机理驱动（主导） / 需求驱动（补充）",
+        skills: ["数据提取 Skill"],
+        platforms: ["伽利略"],
+        outputs: ["数据探索报告（html）", "数据探索计算脚本（py）"]
+      },
+      {
+        id: "logic",
+        path: "机理驱动（主导） / 需求驱动（补充）",
+        skills: ["模型设计 Skill"],
+        platforms: ["离线"],
+        outputs: ["初版模型设计文档（Markdown）"]
+      },
+      {
+        id: "review",
+        path: "机理驱动（主导） / 需求驱动（补充）",
+        skills: ["无"],
+        platforms: ["离线"],
+        outputs: ["冻结版模型设计文档（Markdown）"]
+      },
+      {
+        id: "code",
+        path: "机理驱动（主导） / 需求驱动（补充）",
+        skills: ["模型测试 Skill"],
+        platforms: ["离线"],
+        outputs: ["测试验证报告（html）", "测试数据集（csv/parquet）"]
+      },
+      {
+        id: "deploy",
+        path: "机理驱动（主导） / 需求驱动（补充）",
+        skills: ["无"],
+        platforms: ["伽利略"],
+        outputs: ["模型上线配置", "上线版本记录"]
+      },
+      {
+        id: "ops",
+        path: "机理驱动（主导） / 需求驱动（补充）",
+        skills: ["运营监测 Skill"],
+        platforms: ["伽利略"],
+        outputs: ["运行监测报告（html）"]
+      },
+      {
+        id: "iteration",
+        path: "机理驱动（主导） / 需求驱动（补充）",
+        skills: ["模型设计 Skill"],
+        platforms: ["伽利略", "离线"],
+        outputs: ["模型迭代建议（Markdown）", "模型迭代方案（py）"]
+      }
+    ];
 
     const scenarios = {
       battery: {
@@ -1444,14 +1533,12 @@
 
     let activeSource = "battery";
     const expandedFlows = new Set();
-    let activeScenario = "battery";
-    let activeDemoStep = 0;
 
     const flowChart = document.getElementById("flowChart");
     const flowDetailLayer = document.getElementById("flowDetailLayer");
     const nodePopoverLayer = document.getElementById("nodePopoverLayer");
     const sourceButtons = document.querySelectorAll(".source-btn");
-    const demoSteps = document.getElementById("demoSteps");
+    const matrixBody = document.getElementById("matrixBody");
 
     function renderFlow() {
       const activeStyle = pathStyleVars();
@@ -1472,6 +1559,8 @@
       flowChart.querySelectorAll(".svg-node").forEach((node) => {
         node.addEventListener("click", () => {
           const id = node.dataset.flow;
+          const step = flowSteps.find((item) => item.id === id);
+          if (!step?.paths.includes(activeSource)) return;
           if (expandedFlows.has(id)) {
             expandedFlows.delete(id);
           } else {
@@ -1674,95 +1763,37 @@
       });
     });
 
-    function renderScenario() {
-      const scenario = scenarios[activeScenario];
-      document.documentElement.style.setProperty("--scenario-color", scenario.color);
-      document.documentElement.style.setProperty("--scenario-soft", scenario.soft);
-      document.getElementById("scenarioTitle").textContent = scenario.title;
-      document.getElementById("scenarioDesc").textContent = scenario.desc;
-
-      document.querySelectorAll(".scenario-tab").forEach((tab) => {
-        const selected = tab.dataset.scenario === activeScenario;
-        tab.classList.toggle("active", selected);
-        tab.setAttribute("aria-selected", String(selected));
-      });
-
-      demoSteps.innerHTML = scenario.steps.map((step, index) => `
-        <button class="demo-step ${index === activeDemoStep ? "active" : ""}" data-step="${index}">
-          <h4>${step.title}</h4>
-          <p>${step.brief}</p>
-        </button>
-      `).join("");
-
-      document.querySelectorAll(".demo-step").forEach((button) => {
-        button.addEventListener("click", () => {
-          activeDemoStep = Number(button.dataset.step);
-          renderScenario();
-        });
-      });
-
-      renderArtifact();
-    }
-
-    function renderArtifact() {
-      const scenario = scenarios[activeScenario];
-      const step = scenario.steps[activeDemoStep];
-      document.getElementById("artifactTitle").textContent = step.title;
-      document.getElementById("artifactLead").textContent = step.lead;
-      document.getElementById("artifactType").textContent = step.type;
-      document.getElementById("mockName").textContent = step.type;
-      document.getElementById("mockMeta").textContent = step.meta;
-      document.getElementById("mockBody").innerHTML = buildMock(step);
-    }
-
-    function buildMock(step) {
-      if (step.mock === "kv") {
-        return `<div class="kv-grid">${step.data.map(([key, value]) => `
-          <div class="kv"><span>${key}</span><strong>${value}</strong></div>
-        `).join("")}</div>`;
-      }
-      if (step.mock === "chart") {
-        const heights = [48, 72, 58, 92, 66, 84];
+    function renderOutputMatrix() {
+      if (!matrixBody) return;
+      matrixBody.innerHTML = matrixRows.map((row) => {
+        const step = flowSteps.find((item) => item.id === row.id);
         return `
-          <div class="mini-chart">
-            ${heights.map((height) => `<span class="bar" style="height:${height}%"></span>`).join("")}
-          </div>
-          <table class="table">
-            <tbody>
-              ${step.data.map((item, index) => `<tr><td>${item}</td><td>${index % 2 === 0 ? "已生成摘要" : "需人工复核"}</td></tr>`).join("")}
-            </tbody>
-          </table>`;
-      }
-      if (step.mock === "table") {
-        const [head, ...rows] = step.data;
-        return `<table class="table">
-          <thead><tr>${head.map((cell) => `<th>${cell}</th>`).join("")}</tr></thead>
-          <tbody>${rows.map((row) => `<tr>${row.map((cell) => `<td>${cell}</td>`).join("")}</tr>`).join("")}</tbody>
-        </table>`;
-      }
-      if (step.mock === "code") {
-        return `<pre>${step.data}</pre>`;
-      }
-      if (step.mock === "check") {
-        return `<div class="checklist">${step.data.map((item) => `<div class="check">${item}</div>`).join("")}</div>`;
-      }
-      return "";
+          <tr>
+            <td>
+              <div class="matrix-node">
+                <strong>${step.title}</strong>
+                <span>${step.summary}</span>
+              </div>
+            </td>
+            <td>${row.path}</td>
+            <td>${renderMatrixTags(row.skills, "skill")}</td>
+            <td>${renderMatrixTags(row.platforms, "platform")}</td>
+            <td><ul class="matrix-list">${row.outputs.map((item) => `<li>${item}</li>`).join("")}</ul></td>
+          </tr>
+        `;
+      }).join("");
     }
 
-    document.querySelectorAll(".scenario-tab").forEach((tab) => {
-      tab.addEventListener("click", () => {
-        activeScenario = tab.dataset.scenario;
-        activeDemoStep = 0;
-        renderScenario();
-      });
-    });
+    function renderMatrixTags(items, type) {
+      return `<div class="matrix-tags">${items.map((item) => `<span class="matrix-tag ${type}">${item}</span>`).join("")}</div>`;
+    }
 
     window.addEventListener("resize", () => {
       if (expandedFlows.size) requestAnimationFrame(positionNodePopovers);
     });
 
     renderFlow();
-    renderScenario();
+    renderOutputMatrix();
   </script>
 </body>
 </html>
