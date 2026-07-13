@@ -755,6 +755,11 @@
       display: inline-flex;
       align-items: center;
       gap: 5px;
+      min-height: 24px;
+      padding: 4px 9px;
+      border: 1px solid rgba(122, 211, 255, 0.18);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.035);
       color: #d8edf8;
       font-size: 12px;
       font-weight: 800;
@@ -772,30 +777,44 @@
     }
 
     .matrix-tag.requirement {
+      border-color: rgba(159, 242, 255, 0.34);
+      background: rgba(34, 216, 255, 0.09);
       color: #9ff2ff;
     }
 
     .matrix-tag.data {
+      border-color: rgba(66, 242, 161, 0.34);
+      background: rgba(66, 242, 161, 0.08);
       color: #42f2a1;
     }
 
     .matrix-tag.model {
+      border-color: rgba(255, 224, 168, 0.36);
+      background: rgba(255, 189, 89, 0.08);
       color: #ffe0a8;
     }
 
     .matrix-tag.test {
+      border-color: rgba(122, 211, 255, 0.34);
+      background: rgba(122, 211, 255, 0.08);
       color: #7ad3ff;
     }
 
     .matrix-tag.ops {
+      border-color: rgba(201, 247, 255, 0.34);
+      background: rgba(201, 247, 255, 0.07);
       color: #c9f7ff;
     }
 
-    .matrix-tag.offline {
+    .matrix-tag.local {
+      border-color: rgba(184, 200, 214, 0.32);
+      background: rgba(184, 200, 214, 0.08);
       color: #b8c8d6;
     }
 
     .matrix-tag.galileo {
+      border-color: rgba(46, 229, 157, 0.34);
+      background: rgba(46, 229, 157, 0.08);
       color: #2ee59d;
     }
 
@@ -1153,7 +1172,7 @@
       <div class="section-head">
         <div>
           <h2>标准化输出：Skill、平台与交付物矩阵</h2>
-          <p>把每个流程节点需要沉淀的 Skill、执行平台和关键交付物结构化，便于规划离线 Codex 与伽利略云端能力的分工。</p>
+          <p>把每个流程节点需要沉淀的 Skill、执行平台和关键交付物结构化，便于规划本地 Codex 与伽利略云端能力的分工。</p>
         </div>
       </div>
 
@@ -1331,21 +1350,21 @@
         id: "intake",
         path: "需求驱动",
         skills: ["需求解析 Skill"],
-        platforms: ["离线"],
+        platforms: ["本地"],
         outputs: ["初版BRD需求文档（Markdown）"]
       },
       {
         id: "req_review",
         path: "需求驱动",
         skills: [],
-        platforms: ["离线"],
+        platforms: ["本地"],
         outputs: ["冻结版BRD需求文档（Markdown）"]
       },
       {
         id: "understand",
         path: "需求驱动",
         skills: ["需求解析 Skill"],
-        platforms: ["离线"],
+        platforms: ["本地"],
         outputs: ["PRD需求文档（Markdown）", "模型开发排期"]
       },
       {
@@ -1359,21 +1378,21 @@
         id: "logic",
         path: "机理驱动 / 需求驱动",
         skills: ["模型设计 Skill"],
-        platforms: ["离线"],
+        platforms: ["本地"],
         outputs: ["初版模型设计文档（Markdown）"]
       },
       {
         id: "review",
         path: "机理驱动 / 需求驱动",
         skills: [],
-        platforms: ["离线"],
+        platforms: ["本地"],
         outputs: ["冻结版模型设计文档（Markdown）"]
       },
       {
         id: "code",
         path: "机理驱动 / 需求驱动",
         skills: ["模型测试 Skill"],
-        platforms: ["离线"],
+        platforms: ["本地"],
         outputs: ["测试验证报告（html）", "测试数据集（csv/parquet）"]
       },
       {
@@ -1394,7 +1413,7 @@
         id: "iteration",
         path: "机理驱动 / 需求驱动",
         skills: ["模型设计 Skill"],
-        platforms: ["伽利略", "离线"],
+        platforms: ["伽利略", "本地"],
         outputs: ["模型迭代建议（Markdown）", "模型迭代方案（py）"]
       }
     ];
@@ -1812,7 +1831,7 @@
       if (item.includes("模型设计")) return "model";
       if (item.includes("模型测试")) return "test";
       if (item.includes("运营监测")) return "ops";
-      if (item === "离线") return "offline";
+      if (item === "本地") return "local";
       if (item === "伽利略") return "galileo";
       return "";
     }
