@@ -201,18 +201,21 @@
     }
 
     .source-switch {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
-      margin-bottom: 16px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 14px;
     }
 
     .source-btn {
-      text-align: left;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
       border: 1px solid rgba(122, 211, 255, 0.18);
-      border-radius: 16px;
-      padding: 16px;
+      border-radius: 999px;
+      padding: 7px 12px 7px 8px;
       background: rgba(255, 255, 255, 0.035);
+      color: var(--text);
       cursor: pointer;
       transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
     }
@@ -225,23 +228,33 @@
 
     .source-btn.battery.active {
       border-color: rgba(66, 242, 161, 0.76);
-      box-shadow: 0 0 28px rgba(66, 242, 161, 0.12);
+      background: rgba(66, 242, 161, 0.09);
+      box-shadow: 0 0 20px rgba(66, 242, 161, 0.12);
     }
 
     .source-btn.cbb.active {
       border-color: rgba(98, 184, 255, 0.76);
-      box-shadow: 0 0 28px rgba(98, 184, 255, 0.12);
+      background: rgba(98, 184, 255, 0.09);
+      box-shadow: 0 0 20px rgba(98, 184, 255, 0.12);
     }
 
     .source-btn small {
-      display: block;
-      color: var(--muted);
-      margin-bottom: 8px;
+      display: grid;
+      place-items: center;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      color: #dff8ff;
+      background: rgba(122, 211, 255, 0.12);
+      font-size: 11px;
+      font-weight: 850;
+      line-height: 1;
     }
 
     .source-btn strong {
-      display: block;
-      font-size: 20px;
+      font-size: 13px;
+      font-weight: 820;
+      white-space: nowrap;
     }
 
     .pill,
@@ -1031,7 +1044,6 @@
         justify-content: flex-start;
       }
 
-      .source-switch,
       .kv-grid {
         grid-template-columns: 1fr;
       }
@@ -1051,7 +1063,7 @@
       </a>
       <nav class="nav" aria-label="页面导航">
         <a href="#framework">完整流程</a>
-        <a href="#demo">标准化输出</a>
+        <a href="#demo">节点矩阵</a>
       </nav>
     </header>
 
@@ -1065,11 +1077,11 @@
       <div class="glass framework">
         <div class="source-switch" aria-label="需求来源">
           <button class="source-btn battery active" data-source="battery">
-            <small>需求来源 A</small>
+            <small>A</small>
             <strong>机理驱动（主导）</strong>
           </button>
           <button class="source-btn cbb" data-source="cbb">
-            <small>需求来源 B</small>
+            <small>B</small>
             <strong>需求驱动（补充）</strong>
           </button>
         </div>
@@ -1091,7 +1103,7 @@
 
       <div class="glass output-matrix">
         <div class="matrix-wrap">
-          <table class="matrix-table" aria-label="流程节点标准化输出矩阵">
+          <table class="matrix-table" aria-label="流程节点矩阵">
             <thead>
               <tr>
                 <th>流程节点</th>
