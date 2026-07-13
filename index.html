@@ -594,9 +594,9 @@
     }
 
     .detail-keyword {
-      color: #9ff2ff;
+      color: #ffd88a;
       font-weight: 850;
-      background: linear-gradient(180deg, transparent 58%, rgba(34, 216, 255, 0.18) 58%);
+      background: linear-gradient(180deg, transparent 58%, rgba(255, 189, 89, 0.24) 58%);
       border-radius: 3px;
       padding: 0 1px;
     }
@@ -1195,7 +1195,7 @@
     const sourceFlowDetails = {
       battery: {
         eda: {
-          support: ["依据机理分析假设，利用伽利略codex自动提取云端数据中相关测点，进行假设中特征、趋势、分布等探索性分析及验证。"],
+          support: ["依据机理分析假设，利用伽利略Codex自动提取云端数据中相关测点，进行假设中特征、趋势、分布等探索性分析及验证。"],
           outputs: ["数据探索报告（html）", "数据探索计算脚本（py）"]
         },
         logic: {
@@ -1245,7 +1245,7 @@
           outputs: ["PRD需求文档（Markdown）", "模型开发排期"]
         },
         eda: {
-          support: ["基于PRD需求文档，利用伽利略codex自动提取云端数据中相关测点，进行需求中特征、趋势、分布等探索性分析及验证。"],
+          support: ["基于PRD需求文档，利用伽利略Codex自动提取云端数据中相关测点，进行需求中特征、趋势、分布等探索性分析及验证。"],
           outputs: ["数据探索报告（html）", "数据探索计算脚本（py）"]
         },
         logic: {
@@ -1753,7 +1753,7 @@
       const roleSections = step.id === "intake"
         ? `${humanSection}${agentSection}`
         : `${agentSection}${humanSection}`;
-      const outputItems = renderDetailItems(detail.outputs);
+      const outputItems = detail.outputs.map((item) => `<li>${item}</li>`).join("");
       const roleTags = `<div class="popover-role-tags">${step.roles.map((role) => `<span class="svg-node-tag ${role === "human" ? "human" : "agent"}">${role === "human" ? "人工" : "Agent"}</span>`).join("")}</div>`;
       return `
         <div class="flow-detail ${step.roles.join(" ")}">
