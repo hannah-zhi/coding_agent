@@ -802,7 +802,7 @@
       color: #b8c8d6;
     }
 
-    .matrix-tag.galileo {
+    .matrix-tag.cloud {
       border-color: rgba(46, 229, 157, 0.34);
       background: rgba(46, 229, 157, 0.08);
       color: #2ee59d;
@@ -1280,7 +1280,7 @@
         iteration: {
           support: ["基于运营监测结果，生成模型优化方案和版本变更建议。"],
           decision: ["人工确认迭代范围、优先级和是否进入下一版本。"],
-          outputs: ["模型迭代建议（Markdown）", "模型迭代方案（py）"]
+          outputs: ["模型迭代建议（Markdown）", "新版模型计算脚本（py）"]
         }
       },
       cbb: {
@@ -1361,7 +1361,7 @@
         id: "eda",
         path: "机理驱动 / 需求驱动",
         skills: ["数据提取 Skill"],
-        platforms: ["伽利略"],
+        platforms: ["云端"],
         outputs: ["数据探索报告（html）", "数据探索计算脚本（py）"]
       },
       {
@@ -1389,22 +1389,22 @@
         id: "deploy",
         path: "机理驱动 / 需求驱动",
         skills: [],
-        platforms: ["伽利略"],
+        platforms: ["云端"],
         outputs: ["模型上线配置", "上线版本记录"]
       },
       {
         id: "ops",
         path: "机理驱动 / 需求驱动",
         skills: ["运营监测 Skill"],
-        platforms: ["伽利略"],
+        platforms: ["云端"],
         outputs: ["运行监测报告（html）"]
       },
       {
         id: "iteration",
         path: "机理驱动 / 需求驱动",
         skills: ["模型设计 Skill"],
-        platforms: ["伽利略", "本地"],
-        outputs: ["模型迭代建议（Markdown）", "模型迭代方案 / 新版模型计算脚本（py）"]
+        platforms: ["云端", "本地"],
+        outputs: ["模型迭代建议（Markdown）", "新版模型计算脚本（py）"]
       }
     ];
 
@@ -1822,7 +1822,7 @@
       if (item.includes("模型测试")) return "test";
       if (item.includes("运营监测")) return "ops";
       if (item === "本地") return "local";
-      if (item === "伽利略") return "galileo";
+      if (item === "云端") return "cloud";
       return "";
     }
 
