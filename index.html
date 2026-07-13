@@ -1187,16 +1187,16 @@
 
   <script>
     const flowSteps = [
-      { id: "intake", title: "需求提出", summary: "业务诉求结构化", roles: ["agent", "human"], paths: ["cbb"], skills: ["requirement"] },
-      { id: "req_review", title: "需求评审", summary: "价值边界确认", roles: ["human"], paths: ["cbb"], kind: "decision", branch: ["评审通过", "评审不通过"] },
+      { id: "intake", title: "需求提出", summary: "业务需求结构化", roles: ["agent", "human"], paths: ["cbb"], skills: ["requirement"] },
+      { id: "req_review", title: "需求评审", summary: "业务价值确认", roles: ["human"], paths: ["cbb"], kind: "decision", branch: ["评审通过", "评审不通过"] },
       { id: "understand", title: "需求拆解", summary: "场景与复用判断", roles: ["agent", "human"], paths: ["cbb"], skills: ["requirement"], kind: "decision", branch: ["可合并：已有模型迭代", "不可合并：新模型开发"] },
-      { id: "eda", title: "数据探索", summary: "样本与信号验证", roles: ["agent"], paths: ["battery", "cbb"], skills: ["data"] },
-      { id: "logic", title: "模型设计", summary: "规则与模型方案", roles: ["agent"], paths: ["battery", "cbb"], skills: ["model"] },
-      { id: "review", title: "模型评审", summary: "解释与风险决策", roles: ["human"], paths: ["battery", "cbb"], kind: "decision", branch: ["评审通过", "评审不通过"] },
-      { id: "code", title: "测试验证", summary: "回放与边界测试", roles: ["agent"], paths: ["battery", "cbb"], skills: ["test"], kind: "decision", branch: ["测试通过", "测试不通过"] },
-      { id: "deploy", title: "部署上线", summary: "发布与上线确认", roles: ["agent"], paths: ["battery", "cbb"] },
-      { id: "ops", title: "运营监测", summary: "效果与反馈跟踪", roles: ["agent"], paths: ["battery", "cbb"], skills: ["ops"], kind: "decision", branch: ["需要迭代", "无需迭代"] },
-      { id: "iteration", title: "模型迭代", summary: "版本优化闭环", roles: ["agent", "human"], paths: ["battery", "cbb"], skills: ["model"] }
+      { id: "eda", title: "数据探索", summary: "特征提取与样本验证", roles: ["agent"], paths: ["battery", "cbb"], skills: ["data"] },
+      { id: "logic", title: "模型设计", summary: "计算逻辑与判断规则", roles: ["agent"], paths: ["battery", "cbb"], skills: ["model"] },
+      { id: "review", title: "模型评审", summary: "逻辑解释与效果评审", roles: ["human"], paths: ["battery", "cbb"], kind: "decision", branch: ["评审通过", "评审不通过"] },
+      { id: "code", title: "测试验证", summary: "用例测试与边界验证", roles: ["agent"], paths: ["battery", "cbb"], skills: ["test"], kind: "decision", branch: ["测试通过", "测试不通过"] },
+      { id: "deploy", title: "部署上线", summary: "配置管理与上线发布", roles: ["agent"], paths: ["battery", "cbb"] },
+      { id: "ops", title: "运营监测", summary: "效果追踪反馈", roles: ["agent"], paths: ["battery", "cbb"], skills: ["ops"], kind: "decision", branch: ["需要迭代", "无需迭代"] },
+      { id: "iteration", title: "模型迭代", summary: "版本迭代优化", roles: ["agent", "human"], paths: ["battery", "cbb"], skills: ["model"] }
     ];
 
     const skillCatalog = {
@@ -1256,12 +1256,12 @@
         },
         logic: {
           support: ["基于数据探索结果构建模型设计方案，包含主逻辑、阈值、窗口、屏蔽条件和风险等级等技术细节。"],
-          outputs: ["初版模型设计文档（Markdown）"]
+          outputs: ["初版模型设计文档（Markdown）", "初版模型计算脚本（py）"]
         },
         review: {
           decision: ["评审模型设计方案的逻辑合理性、可解释性，判断试运行结果的准确率、覆盖度是否满足要求。"],
           branch: ["评审通过。", "评审不通过。"],
-          outputs: ["冻结版模型设计文档（Markdown）"]
+          outputs: ["冻结版模型设计文档（Markdown）", "冻结版模型计算脚本（py）"]
         },
         code: {
           support: ["基于模型功能设计测试用例，在测试环境进行测试验证。"],
@@ -1306,12 +1306,12 @@
         },
         logic: {
           support: ["基于数据探索结果构建模型设计方案，包含主逻辑、阈值、窗口、屏蔽条件和风险等级等技术细节。"],
-          outputs: ["初版模型设计文档（Markdown）"]
+          outputs: ["初版模型设计文档（Markdown）", "初版模型计算脚本（py）"]
         },
         review: {
           decision: ["评审模型设计方案的逻辑合理性、可解释性，判断试运行结果的准确率、覆盖度是否满足要求。"],
           branch: ["评审通过。", "评审不通过。"],
-          outputs: ["冻结版模型设计文档（Markdown）"]
+          outputs: ["冻结版模型设计文档（Markdown）", "冻结版模型计算脚本（py）"]
         },
         code: {
           support: ["基于模型功能设计测试用例，在测试环境进行测试验证。"],
@@ -1330,7 +1330,7 @@
         iteration: {
           support: ["基于运营监测结果，生成模型优化方案和版本变更建议。"],
           decision: ["人工确认迭代范围、优先级和是否进入下一版本。"],
-          outputs: ["模型迭代建议（Markdown）", "模型迭代方案（py）"]
+          outputs: ["模型迭代建议（Markdown）", "新版模型计算脚本（py）"]
         }
       }
     };
@@ -1369,14 +1369,14 @@
         path: "机理驱动 / 需求驱动",
         skills: ["模型设计 Skill"],
         platforms: ["本地"],
-        outputs: ["初版模型设计文档（Markdown）"]
+        outputs: ["初版模型设计文档（Markdown）", "初版模型计算脚本（py）"]
       },
       {
         id: "review",
         path: "机理驱动 / 需求驱动",
         skills: [],
         platforms: ["本地"],
-        outputs: ["冻结版模型设计文档（Markdown）"]
+        outputs: ["冻结版模型设计文档（Markdown）", "冻结版模型计算脚本（py）"]
       },
       {
         id: "code",
@@ -1404,7 +1404,7 @@
         path: "机理驱动 / 需求驱动",
         skills: ["模型设计 Skill"],
         platforms: ["伽利略", "本地"],
-        outputs: ["模型迭代建议（Markdown）", "模型迭代方案（py）"]
+        outputs: ["模型迭代建议（Markdown）", "模型迭代方案 / 新版模型计算脚本（py）"]
       }
     ];
 
