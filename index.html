@@ -307,13 +307,6 @@
       font-size: 20px;
     }
 
-    .legend {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 18px;
-    }
-
     .pill,
     .node-badge {
       display: inline-flex;
@@ -754,33 +747,62 @@
     .matrix-tags {
       display: flex;
       flex-wrap: wrap;
-      gap: 6px;
+      gap: 10px;
+      align-items: center;
     }
 
     .matrix-tag {
       display: inline-flex;
       align-items: center;
-      min-height: 24px;
-      padding: 4px 8px;
-      border-radius: 999px;
-      border: 1px solid rgba(122, 211, 255, 0.18);
-      background: rgba(255, 255, 255, 0.035);
+      gap: 5px;
       color: #d8edf8;
       font-size: 12px;
-      font-weight: 760;
+      font-weight: 800;
       white-space: nowrap;
     }
 
-    .matrix-tag.skill {
-      border-color: rgba(34, 216, 255, 0.38);
-      background: rgba(34, 216, 255, 0.08);
+    .matrix-tag::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+      box-shadow: 0 0 10px currentColor;
+      flex: 0 0 auto;
+    }
+
+    .matrix-tag.requirement {
       color: #9ff2ff;
     }
 
-    .matrix-tag.platform {
-      border-color: rgba(255, 189, 89, 0.36);
-      background: rgba(255, 189, 89, 0.08);
+    .matrix-tag.data {
+      color: #42f2a1;
+    }
+
+    .matrix-tag.model {
       color: #ffe0a8;
+    }
+
+    .matrix-tag.test {
+      color: #7ad3ff;
+    }
+
+    .matrix-tag.ops {
+      color: #c9f7ff;
+    }
+
+    .matrix-tag.offline {
+      color: #b8c8d6;
+    }
+
+    .matrix-tag.galileo {
+      color: #2ee59d;
+    }
+
+    .matrix-empty {
+      color: var(--dim);
+      font-size: 12px;
+      font-weight: 800;
     }
 
     .matrix-list {
@@ -1119,11 +1141,6 @@
           </button>
         </div>
 
-        <div class="legend">
-          <span class="pill battery">机理驱动路径</span>
-          <span class="pill cbb">需求驱动路径</span>
-        </div>
-
         <div class="flow-chart-wrap" aria-label="完整算法开发流程">
           <svg class="flow-chart" id="flowChart" viewBox="0 0 1500 700" role="img" aria-label="带分支和回环的算法开发流程图"></svg>
           <div class="node-popover-layer" id="nodePopoverLayer" aria-live="polite"></div>
@@ -1312,70 +1329,70 @@
     const matrixRows = [
       {
         id: "intake",
-        path: "需求驱动（补充）",
+        path: "需求驱动",
         skills: ["需求解析 Skill"],
         platforms: ["离线"],
         outputs: ["初版BRD需求文档（Markdown）"]
       },
       {
         id: "req_review",
-        path: "需求驱动（补充）",
-        skills: ["无"],
+        path: "需求驱动",
+        skills: [],
         platforms: ["离线"],
         outputs: ["冻结版BRD需求文档（Markdown）"]
       },
       {
         id: "understand",
-        path: "需求驱动（补充）",
+        path: "需求驱动",
         skills: ["需求解析 Skill"],
         platforms: ["离线"],
         outputs: ["PRD需求文档（Markdown）", "模型开发排期"]
       },
       {
         id: "eda",
-        path: "机理驱动（主导） / 需求驱动（补充）",
+        path: "机理驱动 / 需求驱动",
         skills: ["数据提取 Skill"],
         platforms: ["伽利略"],
         outputs: ["数据探索报告（html）", "数据探索计算脚本（py）"]
       },
       {
         id: "logic",
-        path: "机理驱动（主导） / 需求驱动（补充）",
+        path: "机理驱动 / 需求驱动",
         skills: ["模型设计 Skill"],
         platforms: ["离线"],
         outputs: ["初版模型设计文档（Markdown）"]
       },
       {
         id: "review",
-        path: "机理驱动（主导） / 需求驱动（补充）",
-        skills: ["无"],
+        path: "机理驱动 / 需求驱动",
+        skills: [],
         platforms: ["离线"],
         outputs: ["冻结版模型设计文档（Markdown）"]
       },
       {
         id: "code",
-        path: "机理驱动（主导） / 需求驱动（补充）",
+        path: "机理驱动 / 需求驱动",
         skills: ["模型测试 Skill"],
         platforms: ["离线"],
         outputs: ["测试验证报告（html）", "测试数据集（csv/parquet）"]
       },
       {
         id: "deploy",
-        path: "机理驱动（主导） / 需求驱动（补充）",
-        skills: ["无"],
+        path: "机理驱动 / 需求驱动",
+        skills: [],
         platforms: ["伽利略"],
         outputs: ["模型上线配置", "上线版本记录"]
       },
       {
         id: "ops",
-        path: "机理驱动（主导） / 需求驱动（补充）",
+        path: "机理驱动 / 需求驱动",
         skills: ["运营监测 Skill"],
         platforms: ["伽利略"],
         outputs: ["运行监测报告（html）"]
       },
       {
         id: "iteration",
-        path: "机理驱动（主导） / 需求驱动（补充）",
+        path: "机理驱动 / 需求驱动",
         skills: ["模型设计 Skill"],
         platforms: ["伽利略", "离线"],
         outputs: ["模型迭代建议（Markdown）", "模型迭代方案（py）"]
@@ -1785,7 +1802,19 @@
     }
 
     function renderMatrixTags(items, type) {
-      return `<div class="matrix-tags">${items.map((item) => `<span class="matrix-tag ${type}">${item}</span>`).join("")}</div>`;
+      if (!items.length) return `<span class="matrix-empty">/</span>`;
+      return `<div class="matrix-tags">${items.map((item) => `<span class="matrix-tag ${type} ${matrixTagClass(item)}">${item}</span>`).join("")}</div>`;
+    }
+
+    function matrixTagClass(item) {
+      if (item.includes("需求解析")) return "requirement";
+      if (item.includes("数据提取")) return "data";
+      if (item.includes("模型设计")) return "model";
+      if (item.includes("模型测试")) return "test";
+      if (item.includes("运营监测")) return "ops";
+      if (item === "离线") return "offline";
+      if (item === "伽利略") return "galileo";
+      return "";
     }
 
     window.addEventListener("resize", () => {
