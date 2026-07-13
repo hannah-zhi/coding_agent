@@ -593,6 +593,14 @@
       font-weight: 850;
     }
 
+    .detail-keyword {
+      color: #9ff2ff;
+      font-weight: 850;
+      background: linear-gradient(180deg, transparent 58%, rgba(34, 216, 255, 0.18) 58%);
+      border-radius: 3px;
+      padding: 0 1px;
+    }
+
     .detail-section.agent strong {
       color: #8ff2ff;
     }
@@ -1344,6 +1352,60 @@
       }
     ];
 
+    const detailKeywords = [
+      "业务痛点",
+      "结构化",
+      "需求文档",
+      "需求价值",
+      "数据可行性",
+      "业务边界",
+      "优先级",
+      "风险场景",
+      "测点参数",
+      "已有模型",
+      "模型复用",
+      "机理分析假设",
+      "云端数据",
+      "相关测点",
+      "特征",
+      "趋势",
+      "分布",
+      "探索性分析",
+      "数据探索结果",
+      "模型设计方案",
+      "主逻辑",
+      "阈值",
+      "窗口",
+      "屏蔽条件",
+      "风险等级",
+      "逻辑合理性",
+      "可解释性",
+      "试运行结果",
+      "准确率",
+      "覆盖度",
+      "测试用例",
+      "测试环境",
+      "自动打包",
+      "上线配置",
+      "版本记录",
+      "作业成功率",
+      "预警数量",
+      "误报",
+      "漏报",
+      "运营复盘",
+      "运营监测结果",
+      "模型优化方案",
+      "版本变更建议",
+      "迭代范围",
+      "下一版本",
+      "BRD",
+      "PRD",
+      "Markdown",
+      "html",
+      "py",
+      "csv/parquet"
+    ];
+
     const scenarios = {
       battery: {
         title: "机理驱动（主导）：电芯一致性 / 内短风险预警",
@@ -1683,15 +1745,15 @@
         }).join("")}</div>`
         : "";
       const agentSection = step.roles.includes("agent") && detail.agent?.length
-        ? `<div class="detail-section agent"><small>Agent 执行</small><ul>${detail.agent.map((item) => `<li>${item}</li>`).join("")}</ul></div>`
+        ? `<div class="detail-section agent"><small>Agent 执行</small><ul>${renderDetailItems(detail.agent)}</ul></div>`
         : "";
       const humanSection = step.roles.includes("human") && detail.human?.length
-        ? `<div class="detail-section human"><small>人工介入</small><ul>${detail.human.map((item) => `<li>${item}</li>`).join("")}</ul></div>`
+        ? `<div class="detail-section human"><small>人工介入</small><ul>${renderDetailItems(detail.human)}</ul></div>`
         : "";
       const roleSections = step.id === "intake"
         ? `${humanSection}${agentSection}`
         : `${agentSection}${humanSection}`;
-      const outputItems = detail.outputs.map((item) => `<li>${item}</li>`).join("");
+      const outputItems = renderDetailItems(detail.outputs);
       const roleTags = `<div class="popover-role-tags">${step.roles.map((role) => `<span class="svg-node-tag ${role === "human" ? "human" : "agent"}">${role === "human" ? "人工" : "Agent"}</span>`).join("")}</div>`;
       return `
         <div class="flow-detail ${step.roles.join(" ")}">
@@ -1707,6 +1769,16 @@
           </div>
         </div>
       `;
+    }
+
+    function renderDetailItems(items) {
+      return items.map((item) => `<li>${highlightDetailText(item)}</li>`).join("");
+    }
+
+    function highlightDetailText(text) {
+      return detailKeywords.reduce((result, keyword) => {
+        return result.split(keyword).join(`<span class="detail-keyword">${keyword}</span>`);
+      }, text);
     }
 
     function getSourceDetail(step) {
