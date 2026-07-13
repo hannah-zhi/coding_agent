@@ -699,7 +699,7 @@
 
     .matrix-table {
       width: 100%;
-      min-width: 980px;
+      min-width: 1080px;
       border-collapse: collapse;
       font-size: 13px;
     }
@@ -742,6 +742,13 @@
     .matrix-node span {
       color: var(--muted);
       font-size: 12px;
+    }
+
+    .matrix-role-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
     }
 
     .matrix-tags {
@@ -1172,6 +1179,7 @@
             <thead>
               <tr>
                 <th>流程节点</th>
+                <th>Agent/人工</th>
                 <th>适用路径</th>
                 <th>Skill</th>
                 <th>平台</th>
@@ -1801,6 +1809,7 @@
                 <span>${step.summary}</span>
               </div>
             </td>
+            <td>${renderRoleTags(step.roles)}</td>
             <td>${row.path}</td>
             <td>${renderMatrixTags(row.skills, "skill")}</td>
             <td>${renderMatrixTags(row.platforms, "platform")}</td>
@@ -1808,6 +1817,10 @@
           </tr>
         `;
       }).join("");
+    }
+
+    function renderRoleTags(roles) {
+      return `<div class="matrix-role-tags">${roles.map((role) => `<span class="svg-node-tag ${role === "human" ? "human" : "agent"}">${role === "human" ? "人工" : "Agent"}</span>`).join("")}</div>`;
     }
 
     function renderMatrixTags(items, type) {
