@@ -1688,6 +1688,9 @@
       const humanSection = step.roles.includes("human") && detail.human?.length
         ? `<div class="detail-section human"><small>人工介入</small><ul>${detail.human.map((item) => `<li>${item}</li>`).join("")}</ul></div>`
         : "";
+      const roleSections = step.id === "intake"
+        ? `${humanSection}${agentSection}`
+        : `${agentSection}${humanSection}`;
       const outputItems = detail.outputs.map((item) => `<li>${item}</li>`).join("");
       const roleTags = `<div class="popover-role-tags">${step.roles.map((role) => `<span class="svg-node-tag ${role === "human" ? "human" : "agent"}">${role === "human" ? "人工" : "Agent"}</span>`).join("")}</div>`;
       return `
@@ -1697,8 +1700,7 @@
             ${roleTags}
           </div>
           ${skillSection}
-          ${agentSection}
-          ${humanSection}
+          ${roleSections}
           <div class="detail-section output">
             <small>关键交付物</small>
             <ul>${outputItems}</ul>
