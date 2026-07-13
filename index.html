@@ -1519,10 +1519,11 @@
       `;
 
       flowChart.querySelectorAll(".svg-node").forEach((node) => {
-        node.addEventListener("click", () => {
+        node.addEventListener("click", (event) => {
           const id = node.dataset.flow;
           const step = flowSteps.find((item) => item.id === id);
           if (!step?.paths.includes(activeSource)) return;
+          event.stopPropagation();
           if (expandedFlows.has(id)) {
             expandedFlows.delete(id);
           } else {
@@ -1699,7 +1700,7 @@
           ${agentSection}
           ${humanSection}
           <div class="detail-section output">
-            <small>交付物</small>
+            <small>关键交付物</small>
             <ul>${outputItems}</ul>
           </div>
         </div>
@@ -1723,6 +1724,12 @@
         expandedFlows.clear();
         renderFlow();
       });
+    });
+
+    document.addEventListener("click", () => {
+      if (!expandedFlows.size) return;
+      expandedFlows.clear();
+      renderFlow();
     });
 
     function renderOutputMatrix() {
